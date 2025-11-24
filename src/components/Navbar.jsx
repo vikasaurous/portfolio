@@ -2,6 +2,8 @@ import dayjs from "dayjs";
 import { navIcons, navLinks } from "#constants";
 import { useEffect, useState } from "react";
 
+
+// todo: fix font sizes
 const Navbar = () => {
   const [currentTime, setCurrentTime] = useState(dayjs());
 
