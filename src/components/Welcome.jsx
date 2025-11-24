@@ -29,7 +29,7 @@ const setupTextHover = (container, type) => {
     return gsap.to(letter, {
       duration,
       ease: "power2.out",
-      fontVariationSettings: `'wght' ${weight}` // ✅ Fixed typo and variable
+      fontVariationSettings: `'wght' ${weight}`
     });
   }
 
@@ -40,7 +40,7 @@ const setupTextHover = (container, type) => {
     letters.forEach((letter) => {
       const { left: l, width: w } = letter.getBoundingClientRect();
       const distance = Math.abs(mouseX - (l - left + w / 2))
-      const intensity = Math.exp(-(distance ** 2) / 200)
+      const intensity = Math.exp(-(distance ** 2) / 20000)
 
       animateLetter(letter, min + (max - min) * intensity)
     });
