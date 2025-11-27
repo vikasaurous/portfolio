@@ -1,10 +1,11 @@
 import dayjs from "dayjs";
 import { navIcons, navLinks } from "#constants";
 import { useEffect, useState } from "react";
+import useWindowStore from "#store/Window";
 
-
-// todo: fix font sizes
 const Navbar = () => {
+  const { openWindow }= useWindowStore(); 
+
   const [currentTime, setCurrentTime] = useState(dayjs());
 
   useEffect(() => {
@@ -24,8 +25,8 @@ const Navbar = () => {
         <p className="font-bold">Vikas's Portfolio</p>
 
         <ul>
-          {navLinks.map(({ id, name }) => (
-            <li key={id}>
+          {navLinks.map(({ id, name, type }) => (
+            <li key={id} onClick={() => openWindow(type)}>
               <p>{name}</p>
             </li>
           ))}
