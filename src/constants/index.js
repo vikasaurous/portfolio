@@ -131,22 +131,22 @@ const socials = [
     id: 1,
     text: "Github",
     icon: "/icons/github.svg",
-    bg: "#f4656b",
-    link: "https://github.com/ProfessionalHelloWorldCoder",
+    bg: "#30363d",
+    link: "https://github.com/vikasaurous",
   },
   {
     id: 2,
-    text: "Platform",
-    icon: "/icons/atom.svg",
-    bg: "#4bcb63",
+    text: "Instagram",
+    icon: "/icons/instagram-logo.svg",
+    bg: "#E4405F ",
     link: "https://jsmastery.com/",
   },
   {
     id: 3,
     text: "Twitter/X",
     icon: "/icons/twitter.svg",
-    bg: "#ff866b",
-    link: "https://x.com/jsmasterypro",
+    bg: "#000000 ",
+    link: "https://x.com/vikasaurous",
   },
   {
     id: 4,
@@ -282,7 +282,7 @@ const WORK_LOCATION = {
       icon: "/images/folder.png",
       kind: "folder",
       position: "top-52 right-80",
-      windowPosition: "top-[20vh] left-7",
+      windowPosition: "top-[45vh] left-57",
       children: [
         {
           id: 1,
@@ -335,7 +335,7 @@ const WORK_LOCATION = {
       icon: "/images/folder.png",
       kind: "folder",
       position: "top-10 left-80",
-      windowPosition: "top-[33vh] left-7",
+      windowPosition: "top-[23vh] right-27",
       children: [
         {
           id: 1,

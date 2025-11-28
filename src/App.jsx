@@ -1,24 +1,60 @@
-import { Draggable } from "gsap/Draggable"
+import { Draggable } from "gsap/Draggable";
 import gsap from "gsap";
 
-import { Dock, Navbar, Welcome } from "#components"
-import { Contact, Finder, Image, Resume, Safari, Terminal, Text } from "#windows";
+import { useEffect } from "react";
+import { Dock, Home, Navbar, Welcome } from "#components";
+import {
+  Contact,
+  Finder,
+  Image,
+  Photos,
+  Resume,
+  Safari,
+  Terminal,
+  Text,
+} from "#windows";
 
 gsap.registerPlugin(Draggable);
 
 const App = () => {
-  return <main>
-    <Navbar />
-    <Welcome />
-    <Dock />
-    <Terminal />
-    <Safari />
-    <Resume />
-    <Finder />
-    <Text />
-    <Image />
-    <Contact />
-  </main>
-}
+  useEffect(() => {
+    const handleContextMenu = (e) => e.preventDefault();
+    const handleDragStart = (e) => e.preventDefault();
 
-export default App
+    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('dragstart', handleDragStart);
+    
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('dragstart', handleDragStart);
+    };
+  }, []);
+
+  return (
+    <main className="select-none">
+      {/* Navigation */}
+      <Navbar />
+
+      {/* Hero */}
+      <Welcome />
+
+      {/* Main Content */}
+      <Home />
+
+      {/* Apps/Windows */}
+      <Terminal />
+      <Safari />
+      <Resume />
+      <Finder />
+      <Text />
+      <Image />
+      <Photos />
+      <Contact />
+
+      {/* Fixed UI */}
+      <Dock />
+    </main>
+  );
+};
+
+export default App;
