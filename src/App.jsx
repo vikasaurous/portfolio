@@ -12,6 +12,7 @@ import {
   Safari,
   Terminal,
   Text,
+  Trash,
 } from "#windows";
 
 gsap.registerPlugin(Draggable);
@@ -50,6 +51,7 @@ const App = () => {
       <Image />
       <Photos />
       <Contact />
+      <Trash />
 
       {/* Fixed UI */}
       <Dock />

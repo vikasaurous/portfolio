@@ -13,9 +13,9 @@ const Contact = () => {
 
       <div className="p-5 space-y-5">
         <img
-          src="/images/adrian.jpg"
-          alt="adrian"
-          className="w-20 rounded-full"
+          src="/images/vikas.png"
+          alt="vikas"
+          className="w-20 h-20 rounded-full object-cover object-top scale-125"
         />
         <h3>Let's Connect</h3>
         <p>Got an Idea? A bug to squash? Or just wanna talk tech? I'm in.</p>
