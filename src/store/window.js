@@ -36,13 +36,18 @@ const useWindowStore = create(
     minimizeWindow: (windowKey) => 
       set((state) => {
         const win = state.windows[windowKey];
-
+        if (!win) return;
+        win.isOpen = false;
+        win.zIndex = INITIAL_Z_INDEX;
       }),
 
     maximizeWindow: (windowKey) =>
       set((state) => {
         const win = state.windows[windowKey];
-        
+        if (!win) return;
+        win.isMaximized = !win.isMaximized;
+        win.zIndex = state.nextZIndex; // Bring to front on maximize toggle
+        state.nextZIndex++;
       })
 
 

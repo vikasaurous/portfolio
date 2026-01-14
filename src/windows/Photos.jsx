@@ -4,7 +4,7 @@ import WindowWrapper from "#hoc/WindowWrapper";
 import useWindowStore from "#store/Window";
 import { Mail, Search } from "lucide-react";
 
-const Photos = () => {
+const Photos = ({ isMaximized }) => {
   const { openWindow } = useWindowStore();
   return (
     <>
@@ -30,7 +30,7 @@ const Photos = () => {
         </div>
 
         <div className="gallery">
-          <ul>
+          <ul className={`gap-3 space-y-3 w-full transition-all duration-500 ease-in-out ${isMaximized ? "columns-3" : "columns-2"}`}>
             {gallery.map(({ id, img }) => (
               <li
                 key={id}

@@ -7,7 +7,7 @@ import { useLayoutEffect, useRef } from "react";
 const WindowWrapper = (Component, windowKey) => {
   const Wrapped = (props) => {
     const { focusWindow, windows } = useWindowStore();
-    const { isOpen, zIndex, originRect } = windows[windowKey];
+    const { isOpen, zIndex, originRect, isMaximized } = windows[windowKey];
     const ref = useRef(null);
     const zIndexRef = useRef(zIndex);
     const lastPosRef = useRef({ x: 0, y: 0 });
@@ -106,7 +106,18 @@ const WindowWrapper = (Component, windowKey) => {
         const currentY = gsap.getProperty(el, "y") || 0;
 
         // Save current position before animating away
-        lastPosRef.current = { x: currentX, y: currentY };
+        // If maximized, we want to restore to the PRE-MAXIMIZED position next time we open
+        // OR we want to behave as if we are closing from the maximized state.
+        // User said: "minimize to intial location". 
+        // If we are maximized, `restoreRef.current` holds the non-maximized position.
+        if (restoreRef.current) {
+             lastPosRef.current = { 
+                 x: restoreRef.current.x, 
+                 y: restoreRef.current.y 
+             };
+        } else {
+             lastPosRef.current = { x: currentX, y: currentY };
+        }
 
         if (originRect) {
           const currentRect = el.getBoundingClientRect();
@@ -127,11 +138,26 @@ const WindowWrapper = (Component, windowKey) => {
             y: currentY + yDiff,
             scaleX: scaleX,
             scaleY: scaleY,
+            transformOrigin: "center center", // FORCE center origin to prevent springing to corner
             duration: 0.4,
             ease: "expo.in", // Accelerate out
             onComplete: () => {
               el.style.display = "none";
               el.style.willChange = "auto";
+              // Reset maximize state gracefully if needed, or rely on store.
+              // If we closed while maximized, we should probably reset the style overrides
+              // so next open is clean (unless we want to open strictly as maximized).
+              // For now, let's clear the maximized props invisible so next open is normal size
+              if (restoreRef.current) {
+                  gsap.set(el, { clearProps: "width,height,top,left,borderRadius" });
+                  restoreRef.current = null;
+                  
+                  // Optional: We might want to tell the store we are no longer maximized
+                  // But since we can't easily access the setter here without adding it to the hook's scope/store
+                  // simple visual reset is usually enough for the UX "minimize to initial location".
+                  // However, let's check if we have access to maximizeWindow action? 
+                  // No, we only destructured what we needed.
+              }
             },
           });
 
@@ -144,7 +170,7 @@ const WindowWrapper = (Component, windowKey) => {
           });
         } else {
           gsap.to(el, {
-            scale: 0.8,
+            scale: 0.8, // ... default close
             y: currentY + 40,
             opacity: 0,
             duration: 0.2,
@@ -157,12 +183,82 @@ const WindowWrapper = (Component, windowKey) => {
       }
     }, [isOpen]);
 
+    const draggableRef = useRef(null);
+    const restoreRef = useRef(null);
+
+    useGSAP(() => {
+        const el = ref.current;
+        if (!el) return;
+
+        if (isMaximized) {
+            if (draggableRef.current) draggableRef.current.disable();
+
+            const currentX = gsap.getProperty(el, "x");
+            const currentY = gsap.getProperty(el, "y");
+            const rect = el.getBoundingClientRect();
+            
+            if (!restoreRef.current) {
+                restoreRef.current = { 
+                    x: currentX, 
+                    y: currentY,
+                    width: rect.width,
+                    height: rect.height,
+                    visualX: rect.x,
+                    visualY: rect.y
+                };
+            }
+
+            gsap.to(el, {
+                x: 0,
+                y: 0,
+                width: "100vw",
+                height: "100vh",
+                top: 0,
+                left: 0,
+                borderRadius: 0,
+                duration: 0.3,
+                ease: "power2.inOut"
+            });
+        } else {
+            if (draggableRef.current) draggableRef.current.enable();
+
+            if (restoreRef.current) {
+                // Determine target visual position (relative to screen, which is relative to top:0 left:0)
+                const targetX = restoreRef.current.visualX;
+                const targetY = restoreRef.current.visualY;
+
+                gsap.to(el, {
+                    x: targetX,
+                    y: targetY,
+                    width: restoreRef.current.width,
+                    height: restoreRef.current.height,
+                    borderRadius: "12px", 
+                    duration: 0.3,
+                    ease: "power2.inOut",
+                    onComplete: () => {
+                         // 1. Remove the overrides (restoring original CSS top/left)
+                         gsap.set(el, { 
+                             clearProps: "width,height,top,left,borderRadius" 
+                         });
+                         // 2. Restore the original transforms that matched that CSS
+                         gsap.set(el, {
+                             x: restoreRef.current.x,
+                             y: restoreRef.current.y
+                         });
+                         restoreRef.current = null;
+                    }
+                });
+            }
+        }
+    }, [isMaximized]);
+
     useGSAP(() => {
       const el = ref.current;
       if (!el) return;
       const [instance] = Draggable.create(el, {
         onPress: () => focusWindow(windowKey),
       });
+      draggableRef.current = instance;
       return () => instance.kill();
     }, []);
 
@@ -173,7 +269,7 @@ const WindowWrapper = (Component, windowKey) => {
         style={{ zIndex: isOpen ? zIndex : zIndexRef.current }} 
         className="absolute"
       >
-        <Component {...props} />
+        <Component {...props} isMaximized={isMaximized} />
       </section>
     );
   };
