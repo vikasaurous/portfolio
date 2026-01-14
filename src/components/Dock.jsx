@@ -59,7 +59,7 @@ const Dock = () => {
     };
   }, []);
 
-  const toggleApp = (app) => {
+  const toggleApp = (app, e) => {
     if (!app.canOpen) return;
 
     const window = windows[app.id];
@@ -72,14 +72,25 @@ const Dock = () => {
     if (window.isOpen) {
       closeWindow(app.id);
     } else {
-      openWindow(app.id);
+      const button = e?.currentTarget;
+      const rect = button?.getBoundingClientRect();
+      const originRect = rect
+        ? {
+            x: rect.x,
+            y: rect.y,
+            width: rect.width,
+            height: rect.height,
+          }
+        : null;
+
+      openWindow(app.id, null, originRect);
     }
 
     // console.log(windows)
   };
 
   return (
-    <section id="dock">
+    <section id="dock" style={{ zIndex: 9999 }}>
       <div ref={dockRef} className="dock-container">
         {dockApps.map(({ id, name, icon, canOpen }) => (
           <div key={id} className="relative flex justify-center">
@@ -91,7 +102,7 @@ const Dock = () => {
               data-tooltip-content={name}
               data-tooltip-delay-show={150}
               disabled={!canOpen}
-              onClick={() => toggleApp({ id, canOpen })}
+              onClick={(e) => toggleApp({ id, canOpen }, e)}
             >
               <img
                 src={`/images/${icon}`}

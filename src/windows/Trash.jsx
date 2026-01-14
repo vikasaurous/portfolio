@@ -11,11 +11,13 @@ const Trash = () => {
 
   useEffect(() => {
     if (windows.trash.isOpen) {
+      const trashOriginRect = windows.trash.originRect;
+
       if (windows.finder.isOpen && activeLocation.id === locations.trash.id) {
         closeWindow("finder");
       } else {
         setActiveLocation(locations.trash);
-        openWindow("finder");
+        openWindow("finder", null, trashOriginRect);
       }
       closeWindow("trash");
     }

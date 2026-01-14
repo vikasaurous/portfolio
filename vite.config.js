@@ -5,7 +5,7 @@ import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({mode}) => ({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -22,4 +22,7 @@ export default defineConfig({
       "#windows": resolve(dirname(fileURLToPath(import.meta.url)), "src/windows"),
     },
   },
-});
+  server: mode === "development" ? {
+    allowedHosts: ["unopposable-anita-judgmental.ngrok-free.dev"],
+  } : {},
+}));

@@ -7,13 +7,14 @@ const useWindowStore = create(
     windows: WINDOW_CONFIG,
     nextZIndex: INITIAL_Z_INDEX + 1,
 
-    openWindow: (windowKey, data = null) =>
+    openWindow: (windowKey, data = null, originRect = null) =>
       set((state) => {
         const win = state.windows[windowKey];
         if (!win) return;
-        win.isOpen = true
+        win.isOpen = true;
         win.zIndex = state.nextZIndex;
         win.data = data ?? win.data;
+        if (originRect) win.originRect = originRect;
         state.nextZIndex++;
       }),
 
@@ -31,6 +32,20 @@ const useWindowStore = create(
         win.zIndex = state.nextZIndex;
         state.nextZIndex++;
       }),
+
+    minimizeWindow: (windowKey) => 
+      set((state) => {
+        const win = state.windows[windowKey];
+
+      }),
+
+    maximizeWindow: (windowKey) =>
+      set((state) => {
+        const win = state.windows[windowKey];
+        
+      })
+
+
   }))
 );
 
