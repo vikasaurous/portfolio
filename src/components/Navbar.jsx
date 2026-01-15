@@ -1,10 +1,10 @@
 import dayjs from "dayjs";
-import { navIcons, navLinks } from "#constants";
+import { navIcons, navLinks, locations } from "#constants";
 import { useEffect, useState } from "react";
 import useWindowStore from "#store/Window";
 
 const Navbar = () => {
-  const { openWindow }= useWindowStore(); 
+  const { openWindow, closeWindow, windows } = useWindowStore(); 
 
   const [currentTime, setCurrentTime] = useState(dayjs());
 
@@ -36,8 +36,27 @@ const Navbar = () => {
       <div>
         <ul>
           {navIcons.map(({ id, img }) => (
-            <li key={id}>
-              <img src={img} className="icon-hover" alt={`icon-${id}`} />
+            <li
+              key={id}
+              onClick={() => {
+                if (id === 3) {
+                  const aboutFile = locations.about.children.find(
+                    (child) => child.name === "about-me.txt"
+                  );
+                  if (aboutFile) {
+                    if (
+                      windows.txtfile.isOpen &&
+                      windows.txtfile.data?.name === "about-me.txt"
+                    ) {
+                      closeWindow("txtfile");
+                    } else {
+                      openWindow("txtfile", aboutFile);
+                    }
+                  }
+                }
+              }}
+            >
+              <img src={img} className="icon-hover cursor-pointer" alt={`icon-${id}`} />
             </li>
           ))}
         </ul>

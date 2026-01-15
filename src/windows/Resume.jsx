@@ -20,7 +20,7 @@ const Resume = () => {
         <h2>Vikas_Yadav_Resume.pdf</h2>
         <a
           href="files/resume.pdf"
-          download
+          download="Vikas_Yadav_Resume.pdf"
           className="cursor-pointer"
           title="Download Resume"
         >
