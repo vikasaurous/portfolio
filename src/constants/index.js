@@ -135,29 +135,31 @@ const socials = [
     id: 1,
     text: "Github",
     icon: "/icons/github.svg",
-    bg: "#30363d",
+    bg: "#121415ff",
     link: "https://github.com/vikasaurous",
   },
   {
     id: 2,
-    text: "Instagram",
-    icon: "/icons/instagram-logo.svg",
-    bg: "#E4405F ",
-    link: "https://instagram.com/vikasaurous",
+    text: "LinkedIn",
+    icon: "/icons/linkedin.svg",
+    bg: "#05b6f6",
+    link: "https://www.linkedin.com/in/connectvikasyadav/",
+    
   },
   {
     id: 3,
     text: "Twitter/X",
     icon: "/icons/twitter.svg",
-    bg: "#000000 ",
+    bg: "#000000d7 ",
     link: "https://x.com/vikasaurous",
   },
   {
     id: 4,
-    text: "LinkedIn",
-    icon: "/icons/linkedin.svg",
-    bg: "#05b6f6",
-    link: "https://www.linkedin.com/in/connectvikasyadav/",
+    text: "Instagram",
+    icon: "/icons/instagram-logo.svg",
+    bg: "#ea5772ff ",
+    link: "https://instagram.com/vikasaurous",
+    
   },
 ];
 

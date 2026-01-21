@@ -18,6 +18,7 @@ export default defineConfig(({mode}) => ({
         "src/constants"
       ),
       "#store": resolve(dirname(fileURLToPath(import.meta.url)), "src/store"),
+      "#context": resolve(dirname(fileURLToPath(import.meta.url)), "src/context"),
       "#hoc": resolve(dirname(fileURLToPath(import.meta.url)), "src/hoc"),
       "#windows": resolve(dirname(fileURLToPath(import.meta.url)), "src/windows"),
     },

@@ -1,30 +1,43 @@
 import dayjs from "dayjs";
 import { navIcons, navLinks, locations } from "#constants";
 import { useEffect, useState, useRef } from "react";
-import useWindowStore from "#store/Window";
+import useWindowStore from "#store/window";
+import useThemeStore from "#store/theme"; // ADD THIS
+import Spotlight from "./Spotlight";
+import { Sun, Moon, Laptop } from "lucide-react";
 
 const Navbar = () => {
   const { openWindow, closeWindow, windows } = useWindowStore();
+  const { theme, setTheme } = useThemeStore(); // ADD THIS
 
   const [currentTime, setCurrentTime] = useState(dayjs());
   const [isWifiOpen, setIsWifiOpen] = useState(false);
+  const [isControlCenterOpen, setIsControlCenterOpen] = useState(false);
+  const [isSpotlightOpen, setIsSpotlightOpen] = useState(false);
   const wifiRef = useRef(null);
+  const controlCenterRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (wifiRef.current && !wifiRef.current.contains(event.target)) {
         setIsWifiOpen(false);
       }
+      if (
+        controlCenterRef.current &&
+        !controlCenterRef.current.contains(event.target)
+      ) {
+        setIsControlCenterOpen(false);
+      }
     };
 
-    if (isWifiOpen) {
+    if (isWifiOpen || isControlCenterOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isWifiOpen]);
+  }, [isWifiOpen, isControlCenterOpen]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -36,10 +49,17 @@ const Navbar = () => {
 
   const formattedTime = currentTime.format("ddd MMM D h:mm:ss A");
 
+  // ADD THIS FUNCTION
+  const handleThemeChange = (newTheme) => {
+    console.log("Theme button clicked:", newTheme);
+    setTheme(newTheme);
+    setIsControlCenterOpen(false);
+  };
+
   return (
     <nav>
       <div>
-        <img src="/images/logo.svg" alt="apple logo" />
+        <img src="/images/logo.svg" alt="apple logo" className="dark:invert" />
         <p className="font-bold">Vikas's Portfolio</p>
 
         <ul>
@@ -55,14 +75,18 @@ const Navbar = () => {
         <ul>
           {navIcons.map(({ id, img, name }) => {
             const isWifi = id === 1;
-            const showTooltip = !isWifi || !isWifiOpen;
+            const isControlCenter = id === 4;
+            const showTooltip = (!isWifi || !isWifiOpen) && (!isControlCenter || !isControlCenterOpen);
 
             return (
               <li
                 key={id}
-                ref={isWifi ? wifiRef : null}
-                className={`relative group ${isWifi ? "" : ""}`}
+                ref={isWifi ? wifiRef : isControlCenter ? controlCenterRef : null}
+                className={`relative group`}
                 onClick={() => {
+                  if (id === 2) {
+                    setIsSpotlightOpen(true);
+                  }
                   if (id === 3) {
                     const aboutFile = locations.about.children.find(
                       (child) => child.name === "about-me.txt"
@@ -81,11 +105,14 @@ const Navbar = () => {
                   if (isWifi) {
                     setIsWifiOpen(!isWifiOpen);
                   }
+                  if (isControlCenter) {
+                    setIsControlCenterOpen(!isControlCenterOpen);
+                  }
                 }}
               >
                 <img
                   src={img}
-                  className="icon-hover cursor-pointer"
+                  className="icon-hover cursor-pointer dark:invert"
                   alt={`icon-${id}`}
                 />
 
@@ -101,14 +128,16 @@ const Navbar = () => {
 
                     {isWifiOpen && (
                       <div
-                        className="absolute top-9 -right-2 w-64 bg-white/80 backdrop-blur-2xl shadow-2xl rounded-xl p-4 border border-white/20 z-[99999] animate-in fade-in zoom-in-95 duration-200 cursor-default"
+                        className="absolute top-9 -right-10 w-52 bg-white/80 dark:bg-gray-800/80 backdrop-blur-2xl shadow-2xl rounded-xl p-4 border border-white/20 dark:border-gray-700/20 z-[99999] animate-in fade-in zoom-in-95 duration-200 cursor-default"
                         onClick={(e) => e.stopPropagation()}
                       >
-                       <div className="absolute -top-2 right-4 w-0 h-0
+                        <div
+                          className="absolute -top-2 right-10 w-0 h-0
                         border-l-[8px] border-l-transparent
                         border-r-[8px] border-r-transparent
-                        border-b-[8px] border-b-white/70
-                        drop-shadow-sm"/>
+                        border-b-[8px] border-b-white/70 dark:border-b-gray-800/70
+                        drop-shadow-sm"
+                        />
                         <ul className="flex flex-col -space-y-3 text-left items-start">
                           {[
                             "Available (mostly)",
@@ -117,7 +146,7 @@ const Navbar = () => {
                           ].map((item) => (
                             <li
                               key={item}
-                              className="text-xs text-gray-600 font-medium flex items-center gap-2"
+                              className="text-xs text-gray-600 dark:text-gray-300 font-medium flex items-center gap-2"
                             >
                               <span className="size-1.5 rounded-full bg-green-500 shrink-0" />
                               {item}
@@ -128,6 +157,54 @@ const Navbar = () => {
                     )}
                   </>
                 )}
+
+                {/* UPDATED CONTROL CENTER */}
+                {isControlCenter && isControlCenterOpen && (
+                  <div className="absolute top-9 -right-6 w-28 bg-white/80 dark:bg-gray-800/80 backdrop-blur-2xl shadow-2xl rounded-xl p-1.5 border border-white/20 dark:border-gray-700/20 z-[99999] animate-in fade-in zoom-in-95 duration-200 cursor-default">
+                    <div
+                      className="absolute -top-2 right-6 w-0 h-0
+                      border-l-[8px] border-l-transparent
+                      border-r-[8px] border-r-transparent
+                      border-b-[8px] border-b-white/80 dark:border-b-gray-800/80
+                      drop-shadow-sm"
+                    />
+                    <div className="flex w-full flex-col gap-0.5">
+                      <div 
+                        className={`flex w-full items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors ${
+                          theme === 'light' 
+                            ? 'bg-blue-500 text-white' 
+                            : 'hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white'
+                        }`}
+                        onClick={() => handleThemeChange('light')}
+                      >
+                        <Sun className="size-3.5" />
+                        <span className="text-xs font-medium">Light</span>
+                      </div>
+                      <div 
+                        className={`flex w-full items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors ${
+                          theme === 'dark' 
+                            ? 'bg-blue-500 text-white' 
+                            : 'hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white'
+                        }`}
+                        onClick={() => handleThemeChange('dark')}
+                      >
+                        <Moon className="size-3.5" />
+                        <span className="text-xs font-medium">Dark</span>
+                      </div>
+                      <div 
+                        className={`flex w-full items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors ${
+                          theme === 'system' 
+                            ? 'bg-blue-500 text-white' 
+                            : 'hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white'
+                        }`}
+                        onClick={() => handleThemeChange('system')}
+                      >
+                        <Laptop className="size-3.5" />
+                        <span className="text-xs font-medium">System</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </li>
             );
           })}
@@ -135,6 +212,11 @@ const Navbar = () => {
 
         <time className="tabular-nums">{formattedTime}</time>
       </div>
+
+      <Spotlight
+        isOpen={isSpotlightOpen}
+        onClose={() => setIsSpotlightOpen(false)}
+      />
     </nav>
   );
 };

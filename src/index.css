@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Georama:ital,wght@0,100..900;1,100..900&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-
 @import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
 
 html,
 body {
@@ -12,6 +13,13 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+/* Dark mode background */
+html.dark,
+html.dark body {
+  background-image: url("/images/wallpaper-dark.png"); /* You'll need a dark wallpaper */
+  background-color: #1a1a1a; /* Fallback dark background */
 }
 
 @theme {
@@ -35,11 +43,11 @@ body {
 
 @layer base {
   main {
-    @apply w-dvw h-dvh overflow-hidden font-host-grotesk ;
+    @apply w-dvw h-dvh overflow-hidden font-host-grotesk;
   }
 
   nav {
-    @apply flex justify-between items-center bg-white/70 backdrop-blur-3xl p-2 px-5 select-none;
+    @apply flex justify-between items-center bg-white/70 dark:bg-gray-900/70 backdrop-blur-3xl p-2 px-5 select-none;
 
     div {
       @apply flex items-center max-sm:w-full max-sm:justify-center gap-5;
@@ -53,29 +61,34 @@ body {
       @apply flex items-center gap-5 max-sm:hidden;
 
       p {
-        @apply text-sm cursor-pointer hover:opacity-70 transition-all;
+        @apply text-sm cursor-pointer hover:opacity-70 transition-all text-black dark:text-white;
       }
     }
 
     time {
-      @apply text-sm font-medium text-black;
+      @apply text-sm font-medium text-black dark:text-white;
+    }
+    
+    /* Logo and title */
+    p.font-bold {
+      @apply text-black dark:text-white;
     }
   }
 }
 
 @layer components {
   .icon {
-    @apply p-1 hover:bg-gray-200 rounded hover:cursor-default;
+    @apply p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded hover:cursor-default;
   }
 
   #welcome {
-    @apply text-gray-200 flex flex-col justify-center items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none max-sm:h-screen max-sm:w-full max-sm:px-10;
+    @apply text-gray-200 dark:text-gray-300 flex flex-col justify-center items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none max-sm:h-screen max-sm:w-full max-sm:px-10;
 
     .small-screen {
       @apply sm:hidden m-7 bg-red-300/20 backdrop-blur-lg p-3 rounded-md absolute top-10;
 
       p {
-        @apply flex-1 text-[16px] text-center font-host-grotesk text-gray-400;
+        @apply flex-1 text-[16px] text-center font-host-grotesk text-gray-400 dark:text-gray-300;
       }
     }
   }
@@ -84,11 +97,11 @@ body {
     @apply absolute bottom-5 left-1/2 -translate-x-1/2 z-[9999] select-none max-sm:hidden;
 
     .dock-container {
-      @apply bg-white/20 backdrop-blur-md justify-between rounded-2xl p-1.5 flex items-end gap-1.5;
+      @apply bg-white/20 dark:bg-gray-800/30 backdrop-blur-md justify-between rounded-2xl p-1.5 flex items-end gap-1.5;
     }
 
     .tooltip {
-      @apply !py-1 !px-3 !w-fit !text-center !text-xs !rounded-md !bg-blue-200 !text-blue-900 !shadow-2xl;
+      @apply !py-1 !px-3 !w-fit !text-center !text-xs !rounded-md !bg-blue-200 dark:!bg-blue-900 !text-blue-900 dark:!text-blue-100 !shadow-2xl;
     }
 
     .dock-icon {
@@ -117,25 +130,29 @@ body {
   }
 
   #window-header {
-    @apply flex items-center justify-between px-4 py-3 rounded-t-lg bg-gray-50 border-b border-gray-200 select-none text-sm text-gray-400;
+    @apply flex items-center justify-between px-4 py-3 rounded-t-lg bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 select-none text-sm text-gray-400 dark:text-gray-300;
+    
+    h2 {
+      @apply text-gray-800 dark:text-gray-200;
+    }
   }
 
   #safari {
-    @apply w-4xl absolute top-15 left-2/12 bg-white shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+    @apply w-4xl absolute top-15 left-2/12 bg-white dark:bg-gray-800 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
 
     .search {
-      @apply flex items-center gap-3 w-2/3 bg-white border border-gray-300 rounded-lg px-3 py-2;
+      @apply flex items-center gap-3 w-2/3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2;
 
       input {
-        @apply placeholder:text-gray-400;
+        @apply placeholder:text-gray-400 dark:placeholder:text-gray-500 text-black dark:text-white bg-transparent;
       }
     }
 
     .blog {
-      @apply bg-white p-10 max-w-3xl mx-auto;
+      @apply bg-white dark:bg-gray-800 p-10 max-w-3xl mx-auto;
 
       h2 {
-        @apply text-xl font-bold text-pink-600 mb-10;
+        @apply text-xl font-bold text-pink-600 dark:text-pink-400 mb-10;
       }
 
       .blog-post {
@@ -149,15 +166,15 @@ body {
           @apply col-span-10 space-y-3;
 
           p {
-            @apply text-xs text-gray-500;
+            @apply text-xs text-gray-500 dark:text-gray-400;
           }
 
           h3 {
-            @apply font-semibold text-base text-gray-800;
+            @apply font-semibold text-base text-gray-800 dark:text-gray-200;
           }
 
           a {
-            @apply text-blue-600 text-xs hover:underline flex items-center gap-3;
+            @apply text-blue-600 dark:text-blue-400 text-xs hover:underline flex items-center gap-3;
           }
         }
       }
@@ -165,29 +182,29 @@ body {
   }
 
   #terminal {
-    @apply w-xl absolute top-32 left-1/12 bg-white shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+    @apply w-xl absolute top-32 left-1/12 bg-white dark:bg-gray-900 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
 
     h2 {
-      @apply font-bold text-sm text-center w-full;
+      @apply font-bold text-sm text-center w-full text-gray-800 dark:text-gray-200;
     }
 
     .techstack {
-      @apply text-sm font-host-grotesk p-5;
+      @apply text-sm font-host-grotesk p-5 text-gray-800 dark:text-gray-200;
 
       .label {
         @apply flex items-center ms-10 mt-7;
       }
 
       .content {
-        @apply py-5 my-5 border-y border-dashed space-y-1;
+        @apply py-5 my-5 border-y border-dashed border-gray-300 dark:border-gray-700 space-y-1;
 
         li {
           .check {
-            @apply text-[#00A154] w-5;
+            @apply text-[#00A154] dark:text-green-400 w-5;
           }
 
           h3 {
-            @apply font-semibold text-[#00A154] w-32 ms-5;
+            @apply font-semibold text-[#00A154] dark:text-green-400 w-32 ms-5;
           }
 
           ul {
@@ -197,7 +214,7 @@ body {
       }
 
       .footnote {
-        @apply text-[#00A154] space-y-1;
+        @apply text-[#00A154] dark:text-green-400 space-y-1;
 
         p {
           @apply flex items-center;
@@ -205,20 +222,27 @@ body {
           svg {
             @apply w-5 me-5;
           }
+           span {
+            @apply text-black dark:text-white;
+           }
         }
       }
     }
   }
 
   #contact {
-    @apply  absolute top-30 left-5/12 bg-white shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+    @apply absolute top-30 left-5/12 bg-white dark:bg-gray-800 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
 
     h2 {
-      @apply font-bold text-sm text-center w-full;
+      @apply font-bold text-sm text-center w-full text-gray-800 dark:text-gray-200;
     }
 
     h3 {
-      @apply text-xl font-semibold;
+      @apply text-xl font-semibold text-gray-800 dark:text-gray-200;
+    }
+
+    p {
+      @apply text-gray-700 dark:text-gray-300;
     }
 
     ul {
@@ -239,21 +263,21 @@ body {
   }
 
   #photos {
-    @apply absolute top-20 left-1/3 -translate-x-1/2 -translate-y-1/2 bg-white shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+    @apply absolute top-20 left-1/3 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
 
     .sidebar {
-      @apply w-3/12 h-[calc(100vh-4rem)] flex-none bg-gray-50 border-r border-gray-200 flex flex-col p-5;
+      @apply w-3/12 h-[calc(100vh-4rem)] flex-none bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col p-5;
 
       h2 {
-        @apply text-xs font-medium text-gray-400 mb-1;
+        @apply text-xs font-medium text-gray-400 dark:text-gray-500 mb-1;
       }
 
       ul {
         li {
-          @apply flex space-y-1 items-center gap-2 px-3 py-2 rounded-md cursor-pointer transition-colors;
+          @apply flex space-y-1 items-center gap-2 px-3 py-2 rounded-md cursor-pointer transition-colors text-gray-700 dark:text-gray-300;
 
           &:first-child {
-            @apply bg-blue-100 text-blue-700;
+            @apply bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300;
           }
 
           img {
@@ -268,7 +292,7 @@ body {
     }
 
     .gallery {
-      @apply p-5;
+      @apply p-5 bg-white dark:bg-gray-800;
 
       ul {
         li {
@@ -283,11 +307,11 @@ body {
   }
 
   #resume {
-    @apply w-fit h-fit absolute top-16 left-7/12 bg-white shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+    @apply w-fit h-fit absolute top-16 left-7/12 bg-white dark:bg-gray-800 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
 
     #window-header {
       h2 {
-        @apply font-bold text-sm text-center flex-1;
+        @apply font-bold text-sm text-center flex-1 text-gray-800 dark:text-gray-200;
       }
     }
   }
@@ -296,21 +320,21 @@ body {
     @apply absolute w-3xl left-40 top-20 shadow-2xl drop-shadow-2xl overflow-hidden rounded-xl;
 
     .sidebar {
-      @apply w-48 bg-gray-50 border-r border-gray-200 flex flex-col p-5 space-y-3;
+      @apply w-48 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col p-5 space-y-3;
 
       h3 {
-        @apply text-xs font-medium text-gray-400 mb-1;
+        @apply text-xs font-medium text-gray-400 dark:text-gray-500 mb-1;
       }
 
       ul {
         @apply space-y-1;
 
         .active {
-          @apply bg-blue-100 text-blue-700;
+          @apply bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300;
         }
 
         .not-active {
-          @apply text-gray-700 hover:bg-gray-200;
+          @apply text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800;
         }
 
         li {
@@ -320,7 +344,7 @@ body {
     }
 
     .content {
-      @apply flex-1 p-8 bg-white max-w-2xl relative;
+      @apply flex-1 p-8 bg-white dark:bg-gray-800 relative;
 
       li {
         @apply absolute flex items-center flex-col gap-3;
@@ -330,31 +354,36 @@ body {
         }
 
         p {
-          @apply text-sm text-center font-medium w-40;
+          @apply text-sm text-center font-medium w-40 text-gray-800 dark:text-gray-200;
         }
       }
     }
   }
 
   #txtfile {
-    @apply w-2xl absolute top-36 right-32 bg-white shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+    @apply w-2xl absolute top-36 right-32 bg-white dark:bg-gray-800 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
 
     h2 {
-      @apply font-bold text-sm text-center w-full;
+      @apply font-bold text-sm text-center w-full text-gray-800 dark:text-gray-200;
+    }
+    
+    /* Add text content dark mode */
+    pre, code, p {
+      @apply text-gray-800 dark:text-gray-200;
     }
   }
 
   #imgfile {
-    @apply w-xl absolute top-40 left-2/12 bg-white shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+    @apply w-xl absolute top-40 left-2/12 bg-white dark:bg-gray-800 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
 
     #window-header {
       p {
-        @apply font-bold text-[#5f6266];
+        @apply font-bold text-[#5f6266] dark:text-gray-300;
       }
     }
 
     .preview {
-      @apply p-2 bg-gray-200 max-h-[70vh];
+      @apply p-2 bg-gray-200 dark:bg-gray-900 max-h-[70vh];
 
       img {
         @apply w-full h-fit object-contain object-center;
@@ -370,11 +399,11 @@ body {
         @apply absolute z-0 select-none flex items-center flex-col;
 
         img {
-          @apply group-hover:bg-gray-950/10 p-1 rounded-md;
+          @apply group-hover:bg-gray-950/10 dark:group-hover:bg-white/10 p-1 rounded-md;
         }
 
         p {
-          @apply text-sm text-white text-center px-1 rounded-md group-hover:bg-blue-500 transition-colors max-w-40;
+          @apply text-sm text-white dark:text-gray-200 text-center px-1 rounded-md group-hover:bg-blue-500 dark:group-hover:bg-blue-600 transition-colors max-w-40;
         }
       }
     }

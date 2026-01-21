@@ -17,39 +17,43 @@ const Text = ({ isMaximized }) => {
         <h2>{name}</h2>
       </div>
 
-      <div
-        className={`p-5 bg-white h-full transition-all duration-300 ease-in-out ${
-          isMaximized
-            ? "flex flex-row items-center gap-16 justify-center px-20 pt-1"
-            : "flex flex-row gap-5 items-center overflow-y-auto"
-        }`}
-      >
-        {image ? (
-          <div className={isMaximized ? "w-auto flex-shrink-0" : "w-1/3 flex-shrink-0"}>
-            <img
-              src={image}
-              alt={name}
-              className={`rounded transition-all duration-300 ease-in-out ${
-                isMaximized
-                  ? "w-80 h-auto object-cover shadow-2xl"
-                  : "w-full h-auto object-cover"
+      <div className="h-full bg-white dark:bg-gray-800 w-full overflow-hidden flex items-center justify-center p-5">
+        <div 
+          className={`flex items-center transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+            isMaximized 
+              ? "gap-20 max-w-6xl w-full px-10 -translate-y-10" 
+              : "gap-6 w-full translate-y-0"
+          }`}
+        >
+          {image ? (
+            <div 
+              className={`flex-shrink-0 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                isMaximized ? "w-[350px]" : "w-1/3"
               }`}
-            />
-          </div>
-        ) : null}
-
-        <div className={isMaximized ? "max-w-xl space-y-6" : "flex-1 space-y-3"}>
-          {subtitle ? (
-            <h3 className={`font-bold text-gray-900 ${isMaximized ? "text-3xl" : "text-lg"}`}>{subtitle}</h3>
-          ) : null}
-
-          {Array.isArray(description) && description.length > 0 ? (
-            <div className={`space-y-4 leading-relaxed text-gray-700 ${isMaximized ? "text-lg" : "text-sm"}`}>
-              {description.map((para, idx) => (
-                <p key={idx}>{para}</p>
-              ))}
+            >
+              <img
+                src={image}
+                alt={name}
+                className="w-full h-auto rounded object-cover shadow-lg"
+              />
             </div>
           ) : null}
+
+          <div className="flex-1 space-y-5">
+            {subtitle ? (
+              <h3 className={`font-bold text-gray-900 dark:text-gray-100 transition-all duration-500 ${isMaximized ? "text-4xl" : "text-xl"}`}>
+                {subtitle}
+              </h3>
+            ) : null}
+
+            {Array.isArray(description) && description.length > 0 ? (
+              <div className={`space-y-4 leading-relaxed text-gray-700 dark:text-gray-300 transition-all duration-500 ${isMaximized ? "text-xl" : "text-sm"}`}>
+                {description.map((para, idx) => (
+                  <p key={idx}>{para}</p>
+                ))}
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </>

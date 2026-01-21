@@ -1,4 +1,5 @@
 import { WindowControl } from "#components";
+import { Mail } from "lucide-react";
 import { socials } from "#constants";
 import WindowWrapper from "#hoc/WindowWrapper";
 import React from "react";
@@ -19,7 +20,15 @@ const Contact = () => {
         />
         <h3>Let's Connect</h3>
         <p>Got an Idea? A bug to squash? Or just wanna talk tech? I'm in.</p>
-        <p>vikas.yadav.connect@gmail.com</p>
+        <a
+          href="https://mail.google.com/mail/?view=cm&fs=1&to=vikas.yadav.connect@gmail.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 font-medium text-gray-600  hover:text-black dark:text-white dark:hover:text-white hover:underline transition-all"
+        >
+          <Mail className="size-4" />
+          vikas.yadav.connect@gmail.com
+        </a>
 
         <ul>
           {socials.map(({ id, bg, link, icon, text }) => (
