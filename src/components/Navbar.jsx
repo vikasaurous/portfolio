@@ -59,7 +59,7 @@ const Navbar = () => {
   return (
     <nav>
       <div>
-        <img src="images/logo.svg" alt="apple logo" className="dark:invert" />
+        <img src="./images/logo.svg" alt="apple logo" className="dark:invert" />
         <p className="font-bold">Vikas's Portfolio</p>
 
         <ul>
