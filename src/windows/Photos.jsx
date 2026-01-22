@@ -1,7 +1,7 @@
 import { WindowControl } from "#components";
 import { gallery, photosLinks } from "#constants";
 import WindowWrapper from "#hoc/WindowWrapper";
-import useWindowStore from "#store/Window";
+import useWindowStore from "#store/window";
 import { Mail, Search } from "lucide-react";
 
 const Photos = ({ isMaximized }) => {
@@ -38,7 +38,7 @@ const Photos = ({ isMaximized }) => {
                   openWindow("imgfile", {
                     id,
                     name: "Gallery Image",
-                    icon: "/images/image.png",
+                    icon: "images/image.png",
                     kind: "file",
                     fileType: "img",
                     imageUrl: img,

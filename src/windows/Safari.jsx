@@ -1,7 +1,7 @@
 import { WindowControl } from "#components";
 import { blogPosts } from "#constants";
 import WindowWrapper from "#hoc/WindowWrapper";
-import useWindowStore from "#store/Window";
+import useWindowStore from "#store/window";
 import {
   ChevronLeft,
   ChevronRight,

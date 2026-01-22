@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 // https://vite.dev/config/
 export default defineConfig(({mode}) => ({
   plugins: [react(), tailwindcss()],
+  base: "/connectvikas",
   resolve: {
     alias: {
       "#components": resolve(
@@ -26,4 +27,5 @@ export default defineConfig(({mode}) => ({
   server: mode === "development" ? {
     allowedHosts: ["unopposable-anita-judgmental.ngrok-free.dev"],
   } : {},
+
 }));

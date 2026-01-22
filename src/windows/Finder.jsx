@@ -2,7 +2,7 @@ import { WindowControl } from "#components";
 import { locations } from "#constants";
 import WindowWrapper from "#hoc/WindowWrapper";
 import useLocationStore from "#store/location";
-import useWindowStore from "#store/Window";
+import useWindowStore from "#store/window";
 import clsx from "clsx";
 import { Search } from "lucide-react";
 import React from "react";

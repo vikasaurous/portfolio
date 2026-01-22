@@ -105,7 +105,7 @@ const Dock = () => {
               onClick={(e) => toggleApp({ id, canOpen }, e)}
             >
               <img
-                src={`/images/${icon}`}
+                src={`images/${icon}`}
                 alt={name}
                 loading="lazy"
                 className={canOpen ? " " : "opacity-60"}

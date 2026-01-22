@@ -2,7 +2,7 @@ import { Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { locations } from "#constants";
-import useWindowStore from "#store/Window";
+import useWindowStore from "#store/window";
 
 const Spotlight = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState("");
@@ -13,12 +13,12 @@ const Spotlight = ({ isOpen, onClose }) => {
 
   // All searchable items
   const searchableItems = [
-    { name: "Finder", type: "finder", icon: "/images/finder.png", category: "Application" },
-    { name: "Safari", type: "safari", icon: "/images/safari.png", category: "Application" },
-    { name: "Terminal", type: "terminal", icon: "/images/terminal.png", category: "Application" },
-    { name: "Photos", type: "photos", icon: "/images/photos.png", category: "Application" },
-    { name: "Contact", type: "contact", icon: "/images/contact.png", category: "Application" },
-    { name: "Resume", type: "resume", icon: "/images/pdf.png", category: "Application" },
+    { name: "Finder", type: "finder", icon: "images/finder.png", category: "Application" },
+    { name: "Safari", type: "safari", icon: "images/safari.png", category: "Application" },
+    { name: "Terminal", type: "terminal", icon: "images/terminal.png", category: "Application" },
+    { name: "Photos", type: "photos", icon: "images/photos.png", category: "Application" },
+    { name: "Contact", type: "contact", icon: "images/contact.png", category: "Application" },
+    { name: "Resume", type: "resume", icon: "images/pdf.png", category: "Application" },
     ...(locations.about?.children || []).map(file => ({
       name: file.name,
       type: "txtfile",

@@ -1,6 +1,6 @@
 import { WindowControl } from "#components";
 import WindowWrapper from "#hoc/WindowWrapper";
-import useWindowStore from "#store/Window";
+import useWindowStore from "#store/window";
 import React from "react";
 
 const ImageWindowContent = () => {

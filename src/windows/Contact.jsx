@@ -14,7 +14,7 @@ const Contact = () => {
 
       <div className="p-5 space-y-5 h-full flex flex-col justify-start items-center pt-12">
         <img
-          src="/images/vikas.png"
+          src="images/vikas.png"
           alt="vikas"
           className="w-20 h-20 rounded-full object-cover object-top scale-125"
         />

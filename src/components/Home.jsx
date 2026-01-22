@@ -1,6 +1,6 @@
 import { locations } from "#constants";
 import useLocationStore from "#store/location";
-import useWindowStore from "#store/Window";
+import useWindowStore from "#store/window";
 import { useGSAP } from "@gsap/react";
 import clsx from "clsx";
 import { Draggable } from "gsap/Draggable";
@@ -29,7 +29,7 @@ const Home = () => {
             className={clsx("group folder", project.windowPosition)}
             onClick={() => handleOpenProjectFinder(project)}
           >
-            <img src="/images/folder.png" alt={project.name} />
+            <img src="images/folder.png" alt={project.name} />
             <p>{project.name}</p>
           </li>
         ))}
