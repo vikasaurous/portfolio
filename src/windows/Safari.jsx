@@ -110,7 +110,7 @@ const Safari = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden relative w-full h-full bg-white">
+      <div className="flex-1 overflow-hidden relative w-full h-full bg-white dark:bg-gray-800">
         {currentUrl ? (
           <iframe
             src={currentUrl}
