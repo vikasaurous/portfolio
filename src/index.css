@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Georama:ital,wght@0,100..900;1,100..900&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Georama:ital,wght@0,100..900;1,100..900&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 @import "tailwindcss";
 
@@ -9,7 +9,7 @@ body {
   width: 100dvw;
   overflow: hidden;
   height: 100dvh;
-  background-image: url("/connectvikas/images/wallpaper.png");
+  background-image: url("/portfolio/images/wallpaper.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -18,7 +18,7 @@ body {
 /* Dark mode background */
 html.dark,
 html.dark body {
-  background-image: url("/connectvikas/images/wallpaper-dark.png"); /* You'll need a dark wallpaper */
+  background-image: url("/portfolio/images/wallpaper-dark.png"); /* You'll need a dark wallpaper */
   background-color: #1a1a1a; /* Fallback dark background */
 }
 
@@ -68,7 +68,7 @@ html.dark body {
     time {
       @apply text-sm font-medium text-black dark:text-white;
     }
-    
+
     /* Logo and title */
     p.font-bold {
       @apply text-black dark:text-white;
@@ -101,7 +101,7 @@ html.dark body {
     }
 
     .tooltip {
-      @apply !py-1 !px-3 !w-fit !text-center !text-xs !rounded-md !bg-blue-200 dark:!bg-blue-900 !text-blue-900 dark:!text-blue-100 !shadow-2xl;
+      @apply !py-1 !px-3 !w-fit !text-center !text-xs !rounded-md !bg-white dark:!bg-blue-900 !text-blue-900 dark:!text-blue-100 !shadow-2xl;
     }
 
     .dock-icon {
@@ -113,25 +113,9 @@ html.dark body {
     }
   }
 
-  #window-controls {
-    @apply flex gap-2;
-
-    .close {
-      @apply size-3.5 rounded-full bg-[#ff6157] cursor-pointer;
-    }
-
-    .minimize {
-      @apply size-3.5 rounded-full bg-[#ffc030] cursor-pointer;
-    }
-
-    .maximize {
-      @apply size-3.5 rounded-full bg-[#2acb42] cursor-pointer;
-    }
-  }
-
   #window-header {
     @apply flex items-center justify-between px-4 py-3 rounded-t-lg bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 select-none text-sm text-gray-400 dark:text-gray-300;
-    
+
     h2 {
       @apply text-gray-800 dark:text-gray-200;
     }
@@ -222,9 +206,9 @@ html.dark body {
           svg {
             @apply w-5 me-5;
           }
-           span {
+          span {
             @apply text-black dark:text-white;
-           }
+          }
         }
       }
     }
@@ -366,9 +350,11 @@ html.dark body {
     h2 {
       @apply font-bold text-sm text-center w-full text-gray-800 dark:text-gray-200;
     }
-    
+
     /* Add text content dark mode */
-    pre, code, p {
+    pre,
+    code,
+    p {
       @apply text-gray-800 dark:text-gray-200;
     }
   }

@@ -57,7 +57,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav>
+    <nav className="mac-navbar">
       <div>
         <img src="./images/logo.svg" alt="apple logo" className="dark:invert" />
         <p className="font-bold">Vikas's Portfolio</p>
