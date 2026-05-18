@@ -5,27 +5,35 @@ import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
 // https://vite.dev/config/
-export default defineConfig(({mode}) => ({
+export default defineConfig(({ mode }) => ({
   plugins: [react(), tailwindcss()],
-  base: "/portfolio",
+  base: "/portfolio/",
   resolve: {
     alias: {
       "#components": resolve(
         dirname(fileURLToPath(import.meta.url)),
-        "src/components"
+        "src/components",
       ),
       "#constants": resolve(
         dirname(fileURLToPath(import.meta.url)),
-        "src/constants"
+        "src/constants",
       ),
       "#store": resolve(dirname(fileURLToPath(import.meta.url)), "src/store"),
-      "#context": resolve(dirname(fileURLToPath(import.meta.url)), "src/context"),
+      "#context": resolve(
+        dirname(fileURLToPath(import.meta.url)),
+        "src/context",
+      ),
       "#hoc": resolve(dirname(fileURLToPath(import.meta.url)), "src/hoc"),
-      "#windows": resolve(dirname(fileURLToPath(import.meta.url)), "src/windows"),
+      "#windows": resolve(
+        dirname(fileURLToPath(import.meta.url)),
+        "src/windows",
+      ),
     },
   },
-  server: mode === "development" ? {
-    allowedHosts: ["unopposable-anita-judgmental.ngrok-free.dev"],
-  } : {},
-
+  server:
+    mode === "development"
+      ? {
+          allowedHosts: ["unopposable-anita-judgmental.ngrok-free.dev"],
+        }
+      : {},
 }));
