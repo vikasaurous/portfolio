@@ -3,14 +3,12 @@ import gsap from "gsap";
 
 import { useEffect } from "react";
 import useThemeStore from "#store/theme";
-import { Dock, Home, Navbar, Welcome } from "#components";
+import { Dock, Home, Navbar, Welcome, LiquidGlassReveal } from "#components";
 import {
   Contact,
   Finder,
   Image,
-  Photos,
   Resume,
-  Safari,
   Terminal,
   Text,
   Trash,
@@ -76,28 +74,28 @@ const App = () => {
 
   return (
     <main className="select-none">
-      {/* Navigation */}
-      <Navbar />
+      <LiquidGlassReveal>
+        {/* Navigation */}
+        <Navbar />
 
-      {/* Hero */}
-      <Welcome />
+        {/* Hero */}
+        <Welcome />
 
-      {/* Main Content */}
-      <Home />
+        {/* Main Content */}
+        <Home />
 
-      {/* Apps/Windows */}
-      <Terminal />
-      <Safari />
-      <Resume />
-      <Finder />
-      <Text />
-      <Image />
-      <Photos />
-      <Contact />
-      <Trash />
+        {/* Apps/Windows */}
+        <Terminal />
+        <Resume />
+        <Finder />
+        <Text />
+        <Image />
+        <Contact />
+        <Trash />
 
-      {/* Fixed UI */}
-      <Dock />
+        {/* Fixed UI */}
+        <Dock />
+      </LiquidGlassReveal>
     </main>
   );
 };

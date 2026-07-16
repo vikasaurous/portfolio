@@ -3,5 +3,6 @@ import Welcome from "./Welcome";
 import Dock from "./Dock";
 import WindowControl from "./WindowControl";
 import Home from "./Home";
+import LiquidGlassReveal from "./LiquidGlassReveal";
 
-export { Navbar, Welcome, Dock, WindowControl, Home };
+export { Navbar, Welcome, Dock, WindowControl, Home, LiquidGlassReveal };

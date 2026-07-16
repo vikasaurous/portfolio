@@ -114,10 +114,11 @@ html.dark body {
   }
 
   #window-header {
-    @apply flex items-center justify-between px-4 py-3 rounded-t-lg bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 select-none text-sm text-gray-400 dark:text-gray-300;
+    @apply relative flex items-center px-4 py-3 rounded-t-lg bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 select-none text-sm text-gray-400 dark:text-gray-300;
 
     h2 {
-      @apply text-gray-800 dark:text-gray-200;
+      /* Absolutely centered — immune to WindowControl button width */
+      @apply absolute inset-x-0 text-center text-gray-800 dark:text-gray-200 pointer-events-none;
     }
   }
 
@@ -166,51 +167,18 @@ html.dark body {
   }
 
   #terminal {
-    @apply w-xl absolute top-32 left-1/12 bg-white dark:bg-gray-900 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+    @apply w-xl absolute top-32 left-1/12 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+    /* Dark terminal background — override any global bg-white default */
+    background-color: #111827;
 
     h2 {
-      @apply font-bold text-sm text-center w-full text-gray-800 dark:text-gray-200;
+      @apply font-bold text-sm text-center w-full text-gray-400;
     }
 
-    .techstack {
-      @apply text-sm font-host-grotesk p-5 text-gray-800 dark:text-gray-200;
-
-      .label {
-        @apply flex items-center ms-10 mt-7;
-      }
-
-      .content {
-        @apply py-5 my-5 border-y border-dashed border-gray-300 dark:border-gray-700 space-y-1;
-
-        li {
-          .check {
-            @apply text-[#00A154] dark:text-green-400 w-5;
-          }
-
-          h3 {
-            @apply font-semibold text-[#00A154] dark:text-green-400 w-32 ms-5;
-          }
-
-          ul {
-            @apply flex items-center gap-3;
-          }
-        }
-      }
-
-      .footnote {
-        @apply text-[#00A154] dark:text-green-400 space-y-1;
-
-        p {
-          @apply flex items-center;
-
-          svg {
-            @apply w-5 me-5;
-          }
-          span {
-            @apply text-black dark:text-white;
-          }
-        }
-      }
+    /* Remove native input selection ring inside terminal */
+    input:focus {
+      outline: none;
+      box-shadow: none;
     }
   }
 
@@ -241,50 +209,6 @@ html.dark body {
 
         p {
           @apply font-semibold text-sm text-white;
-        }
-      }
-    }
-  }
-
-  #photos {
-    @apply absolute top-20 left-1/3 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
-
-    .sidebar {
-      @apply w-3/12 h-[calc(100vh-4rem)] flex-none bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col p-5;
-
-      h2 {
-        @apply text-xs font-medium text-gray-400 dark:text-gray-500 mb-1;
-      }
-
-      ul {
-        li {
-          @apply flex space-y-1 items-center gap-2 px-3 py-2 rounded-md cursor-pointer transition-colors text-gray-700 dark:text-gray-300;
-
-          &:first-child {
-            @apply bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300;
-          }
-
-          img {
-            @apply w-4;
-          }
-
-          p {
-            @apply text-sm font-medium;
-          }
-        }
-      }
-    }
-
-    .gallery {
-      @apply p-5 bg-white dark:bg-gray-800;
-
-      ul {
-        li {
-          @apply break-inside-avoid;
-
-          img {
-            @apply size-full object-cover rounded-lg;
-          }
         }
       }
     }
@@ -393,5 +317,44 @@ html.dark body {
         }
       }
     }
+  }
+}
+
+/* ─── Liquid Glass Reveal ─────────────────────────────────────────────────── */
+
+/**
+ * .lgr-content
+ *
+ * Pass-through wrapper around the entire desktop.
+ * Fills parent <main> completely — no layout shifts.
+ * Promoted to its own GPU compositor layer so the scale tween
+ * (1.015 → 1.00) runs independently without triggering repaints.
+ */
+.lgr-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/**
+ * #lgr-pre-overlay (reduced-motion override)
+ *
+ * The overlay itself uses inline styles set by index.html and updated
+ * by GSAP's applyGlass() callback — no class rules needed for its glass
+ * appearance. This block only overrides for prefers-reduced-motion,
+ * replacing the backdrop-filter with a simple flat background that fades.
+ */
+@media (prefers-reduced-motion: reduce) {
+  #lgr-pre-overlay {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background-color: rgba(240, 242, 248, 0.92) !important;
+  }
+
+  html.dark #lgr-pre-overlay {
+    background-color: rgba(8, 10, 18, 0.92) !important;
   }
 }
