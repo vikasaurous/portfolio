@@ -6,8 +6,49 @@
   <link rel="icon" type="image/svg+xml" href="favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vikas's Portfolio</title>
-  <script type="module" crossorigin src="/portfolio/assets/index-ZW6tm6tf.js"></script>
-  <link rel="stylesheet" crossorigin href="/portfolio/assets/index-DSQvNGIB.css">
+
+  <!--
+    CRITICAL: Liquid Glass Reveal — Pre-React overlay injection.
+
+    This script runs synchronously in <head>, before body exists and before
+    any React code executes. It creates the frosted glass overlay and appends
+    it to <html> (position:fixed works regardless of DOM parent).
+
+    Because it runs before the first paint, the blur is present from frame
+    zero — eliminating the unblurred flash that would occur if the overlay
+    were created inside React's render/effect cycle.
+
+    sessionStorage prevents replaying on page refresh within the same session.
+    Dark mode is inferred from OS preference (closest proxy before React loads).
+  -->
+  <script>
+    (function () {
+      if (sessionStorage.getItem('lgr_played')) return;
+
+      var dark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+
+      var el = document.createElement('div');
+      el.id = 'lgr-pre-overlay';
+      el.setAttribute('aria-hidden', 'true');
+
+      // Inline styles — CSS has not loaded yet, so everything must be inline
+      el.style.cssText = [
+        'position:fixed',
+        'inset:0',
+        'z-index:99999',
+        'pointer-events:none',
+        'backdrop-filter:blur(40px) brightness(0.88)',
+        '-webkit-backdrop-filter:blur(40px) brightness(0.88)',
+        'background:' + (dark ? 'rgba(8,8,14,0.22)' : 'rgba(248,250,255,0.15)'),
+        'will-change:opacity',
+      ].join(';');
+
+      // Append to <html> — body does not exist yet at this point in parsing
+      document.documentElement.appendChild(el);
+    }());
+  </script>
+  <script type="module" crossorigin src="/portfolio/assets/index-B_UhSlV-.js"></script>
+  <link rel="stylesheet" crossorigin href="/portfolio/assets/index-Cxf2U6BD.css">
 </head>
 
 <body>
