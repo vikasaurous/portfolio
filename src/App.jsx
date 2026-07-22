@@ -1,18 +1,24 @@
 import { Draggable } from "gsap/Draggable";
 import gsap from "gsap";
 
-import { useEffect } from "react";
+import { useEffect, Suspense, lazy } from "react";
 import useThemeStore from "#store/theme";
 import { Dock, Home, Navbar, Welcome, LiquidGlassReveal } from "#components";
 import {
   Contact,
   Finder,
   Image,
-  Resume,
   Terminal,
   Text,
   Trash,
 } from "#windows";
+
+// Lazy-loaded: react-pdf + pdf.worker.min.mjs (~1.2 MB) are deferred
+// until the user actually opens the Resume window.
+const Resume = lazy(() => import("./windows/Resume.jsx"));
+
+// Lazy-loaded: Safari UI is deferred until the user opens the Safari window.
+const Safari = lazy(() => import("./windows/Safari/index.jsx"));
 
 gsap.registerPlugin(Draggable);
 
@@ -86,7 +92,12 @@ const App = () => {
 
         {/* Apps/Windows */}
         <Terminal />
-        <Resume />
+        <Suspense fallback={null}>
+          <Resume />
+        </Suspense>
+        <Suspense fallback={null}>
+          <Safari />
+        </Suspense>
         <Finder />
         <Text />
         <Image />

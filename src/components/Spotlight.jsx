@@ -2,6 +2,7 @@ import { Search, X, Clock, Zap } from "lucide-react";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { createPortal } from "react-dom";
 import useWindowStore from "#store/window";
+import useSafariStore from "#store/safari";
 import {
   searchableItems,
   getSuggestedItems,
@@ -130,7 +131,9 @@ const Spotlight = ({ isOpen, onClose }) => {
     addHistoryItemById(item.id);
     
     if (item.url) {
-      window.open(item.url, "_blank");
+      // Open external links in the built-in Safari browser
+      useSafariStore.getState().openUrl(item.url);
+      openWindow("safari");
     } else if (item.data) {
       openWindow(item.type, item.data);
     } else {

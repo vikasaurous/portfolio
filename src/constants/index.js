@@ -47,6 +47,12 @@ const dockApps = [
     canOpen: true,
   },
   {
+    id: "safari",
+    name: "Safari",
+    icon: "safari.png",
+    canOpen: true,
+  },
+  {
     id: "contact",
     name: "Contact", // or "Get in touch"
     icon: "contact.png",
@@ -175,10 +181,10 @@ const WORK_LOCATION = {
           fileType: "txt",
           position: "top-5 left-10",
           description: [
-            "Nutshell is a full-stack AI-powered text summarization web application built with React.js, Node.js, Express.js, and MongoDB.",
-            "It uses the Groq LLM API (Llama 3.1) to condense long-form text into three formats — short summary, detailed breakdown, or bullet points.",
-            "Users can register, log in securely with JWT authentication, generate summaries, and revisit their entire summary history.",
-            "Additional features include text-to-speech playback, copy to clipboard, file download, dark mode, and a fully responsive Neobrutalism UI built with Tailwind CSS.",
+            "Nutshell is a full-stack AI-powered text summarization platform built with React, Node.js, Express, and MongoDB Atlas.",
+            "It leverages Groq's GPT-OSS-120B model to generate concise, detailed, or bullet-point summaries from long-form text in seconds.",
+            "Users can securely register, authenticate with JWT, generate AI-powered summaries, and access their personalized summary history.",
+            "The application features text-to-speech, copy & download support, responsive Neobrutalism-inspired UI, robust backend validation, optimized MongoDB queries, and production deployment on Vercel & Render.",
           ],
         },
         {
@@ -198,12 +204,13 @@ const WORK_LOCATION = {
           fileType: "txt",
           position: "top-30 left-54",
           description: [
-            "⚛️  Frontend: React.js, Tailwind CSS, Vite",
-            "🟢  Backend: Node.js, Express.js, REST API",
-            "🍃  Database: MongoDB, MongoDB Atlas",
-            "🤖  AI Model: Groq API — Llama 3.1 (8B Instant)",
-            "🔐  Auth: JWT, Bcrypt",
-            "☁️  Deployment: Vercel (Frontend), Render (Backend)",
+            "⚛️ Frontend: React.js, Tailwind CSS, Vite",
+            "🟢 Backend: Node.js, Express.js, REST API",
+            "🍃 Database: MongoDB Atlas, Mongoose",
+            "🤖 AI: Groq API — GPT-OSS-120B",
+            "🔐 Authentication: JWT, Bcrypt",
+            "🛡️ Security: Input Validation, CORS Protection",
+            "☁️ Deployment: Vercel (Frontend), Render (Backend)",
           ],
         },
         {

@@ -3,6 +3,7 @@ import { locations } from "#constants";
 import WindowWrapper from "#hoc/WindowWrapper";
 import useLocationStore from "#store/location";
 import useWindowStore from "#store/window";
+import useSafariStore from "#store/safari";
 import clsx from "clsx";
 import { Search } from "lucide-react";
 import React from "react";
@@ -15,10 +16,13 @@ const Finder = () => {
     if (item.fileType === "pdf") return openWindow("resume");
     if (item.kind === "folder") return setActiveLocation(item);
     if (item.fileType === 'url' && item.href) {
-      return openWindow('safari', { url: item.href, title: item.name });
+      // Open all URL files in the built-in Safari browser
+      useSafariStore.getState().openUrl(item.href);
+      openWindow("safari");
+      return;
     }
     if (item.fileType === "fig" && item.href)
-      return window.open(item.href, "blank");
+      return window.open(item.href, "_blank", "noopener,noreferrer");
 
     openWindow(`${item.fileType}${item.kind}`, item);
   };

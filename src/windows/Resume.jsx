@@ -19,7 +19,7 @@ const Resume = () => {
 
         <h2>Vikas_Yadav_Resume.pdf</h2>
         <a
-          href="files/Vikas.pdf"
+          href={`${import.meta.env.BASE_URL}files/resume.pdf`}
           download="Vikas_Yadav_Resume.pdf"
           className="cursor-pointer"
           title="Download Resume"
@@ -29,7 +29,7 @@ const Resume = () => {
         </a>
       </div>
 
-      <Document file="files/resume.pdf">
+      <Document file={`${import.meta.env.BASE_URL}files/resume.pdf`}>
         <Page pageNumber={1} renderTextLayer renderAnnotationLayer />
       </Document>
     </>

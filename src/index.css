@@ -9,7 +9,7 @@ body {
   width: 100dvw;
   overflow: hidden;
   height: 100dvh;
-  background-image: url("/portfolio/images/wallpaper.png");
+  background-image: url("/portfolio/images/wallpaper.avif");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -18,7 +18,7 @@ body {
 /* Dark mode background */
 html.dark,
 html.dark body {
-  background-image: url("/portfolio/images/wallpaper-dark.png"); /* You'll need a dark wallpaper */
+  background-image: url("/portfolio/images/wallpaper-dark.avif"); /* You'll need a dark wallpaper */
   background-color: #1a1a1a; /* Fallback dark background */
 }
 
@@ -123,46 +123,35 @@ html.dark body {
   }
 
   #safari {
-    @apply w-4xl absolute top-15 left-2/12 bg-white dark:bg-gray-800 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+    @apply absolute top-12 left-[8%] shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden flex flex-col;
+    width: 900px;
+    height: 580px;
 
-    .search {
-      @apply flex items-center gap-3 w-2/3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2;
+    /* ── Toolbar (macOS Sonoma chrome colors) ─────────────── */
+    .safari-toolbar {
+      @apply flex items-center gap-2 px-1 shrink-0 select-none
+             border-b border-black/[0.1] dark:border-white/[0.08];
+      height: 44px;
+      background: #ebebeb;
 
-      input {
-        @apply placeholder:text-gray-400 dark:placeholder:text-gray-500 text-black dark:text-white bg-transparent;
+      .dark & {
+        background: #2c2c2e;
       }
     }
 
-    .blog {
-      @apply bg-white dark:bg-gray-800 p-10 max-w-3xl mx-auto;
+    /* ── Address bar pill ─────────────────────────────────── */
+    .safari-address-bar {
+      @apply flex flex-1 items-center gap-1.5 px-2.5 h-[28px]
+             rounded-[7px] cursor-text transition-all duration-150
+             bg-white/80 dark:bg-[#3a3a3c]
+             border border-black/[0.12] dark:border-white/[0.1]
+             text-[13px] text-gray-800 dark:text-gray-200;
+      min-width: 0;
+    }
 
-      h2 {
-        @apply text-xl font-bold text-pink-600 dark:text-pink-400 mb-10;
-      }
-
-      .blog-post {
-        @apply grid grid-cols-12 space-x-5;
-
-        img {
-          @apply size-full rounded-md object-cover;
-        }
-
-        .content {
-          @apply col-span-10 space-y-3;
-
-          p {
-            @apply text-xs text-gray-500 dark:text-gray-400;
-          }
-
-          h3 {
-            @apply font-semibold text-base text-gray-800 dark:text-gray-200;
-          }
-
-          a {
-            @apply text-blue-600 dark:text-blue-400 text-xs hover:underline flex items-center gap-3;
-          }
-        }
-      }
+    /* ── Content area (iframe / start page / error) ───────── */
+    .safari-content {
+      @apply flex-1 relative overflow-hidden bg-white dark:bg-[#1c1c1e];
     }
   }
 

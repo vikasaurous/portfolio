@@ -146,7 +146,7 @@ const education = () =>
 
 const resume = () =>
   action("openLink", {
-    href: "/portfolio/files/resume.pdf",
+    href: `${import.meta.env.BASE_URL}files/resume.pdf`,
     label: "Downloading resume...",
   });
 
