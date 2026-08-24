@@ -2,7 +2,7 @@
 
 @import "tailwindcss";
 
-@variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 html,
 body {
@@ -47,7 +47,18 @@ html.dark body {
   }
 
   nav {
-    @apply flex justify-between items-center bg-white/70 dark:bg-gray-900/70 backdrop-blur-3xl p-2 px-5 select-none;
+    @apply flex justify-between items-center p-2 px-5 select-none relative;
+
+    /* Glass base — lighter tint + real blur, same recipe as the dock */
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.05),
+      0 4px 20px rgba(0, 0, 0, 0.08);
+    isolation: isolate;
 
     div {
       @apply flex items-center max-sm:w-full max-sm:justify-center gap-5;
@@ -69,10 +80,19 @@ html.dark body {
       @apply text-sm font-medium text-black dark:text-white;
     }
 
-    /* Logo and title */
     p.font-bold {
       @apply text-black dark:text-white;
     }
+  }
+
+  html.dark nav,
+  .dark nav {
+    background: rgba(30, 32, 40, 0.5);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+      0 4px 24px rgba(0, 0, 0, 0.35);
   }
 }
 
@@ -96,20 +116,125 @@ html.dark body {
   #dock {
     @apply absolute bottom-5 left-1/2 -translate-x-1/2 z-[9999] select-none max-sm:hidden;
 
+    /* ── Liquid-glass container ────────────────────────────────────────────
+     * Layer 1: backdrop blur + saturation (the "glass" optical effect)
+     * Layer 2: translucent dark/light tint (bg-white/15 / dark:bg-gray-800/25)
+     * Layer 3: ring — thin translucent outer border
+     * Layer 4: inset top highlight — 1px bright stripe at the top edge
+     * Layer 5: soft ambient shadow underneath
+     * ──────────────────────────────────────────────────────────────────── */
     .dock-container {
-      @apply bg-white/20 dark:bg-gray-800/30 backdrop-blur-md justify-between rounded-2xl p-1.5 flex items-end gap-1.5;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 14px 8px;
+      border-radius: 28px;
+
+      /* Layer 1 – glass blur (isolated, no saturate/brightness stacked in) */
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+
+      /* Layer 2 – tint (light) */
+      background: rgba(255, 255, 255, 0.22);
+
+      /* Layer 3 outer border + Layer 4 inset top highlight + Layer 5 shadow */
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.55),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        0 8px 32px rgba(0, 0, 0, 0.22),
+        0 2px 8px rgba(0, 0, 0, 0.14);
+
+      transition:
+        box-shadow 0.3s ease,
+        background 0.3s ease;
+
+      /* Forces GPU compositing layer — helps backdrop-filter actually apply
+     consistently instead of silently no-op'ing on some browsers */
+      isolation: isolate;
+      transform: translateZ(0);
     }
 
+    html.dark .dock-container,
+    .dark .dock-container {
+      background: rgba(28, 30, 38, 0.58);
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+        0 8px 40px rgba(0, 0, 0, 0.5),
+        0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    /* Dark mode — darker tint, brighter highlight */
+    html.dark & .dock-container,
+    .dark & .dock-container {
+      background: rgba(28, 30, 38, 0.52);
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+        0 8px 40px rgba(0, 0, 0, 0.5),
+        0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Tooltip */
     .tooltip {
       @apply !py-1 !px-3 !w-fit !text-center !text-xs !rounded-md !bg-white dark:!bg-blue-900 !text-blue-900 dark:!text-blue-100 !shadow-2xl;
     }
 
+    /* ── Dock icon ───────────────────────────────────────────────────────── */
     .dock-icon {
       @apply size-14 3xl:size-20 cursor-pointer;
+      /* GSAP handles scale + y — CSS provides easing fallback */
+      transform-origin: center bottom;
+      will-change: transform;
+      transition: filter 0.15s ease;
 
       img {
         @apply object-cover object-center;
+        /* Crisp icon rendering — never let the glass blur affect icons */
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
       }
+
+      &:hover img {
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)) brightness(1.06);
+      }
+
+      &:disabled img {
+        filter: opacity(0.45);
+      }
+    }
+    /* ── Active-app dot indicator ─────────────────────────────────────────
+     * Small glowing dot below the icon — shows when the app window is open.
+     * Rendered by Dock.jsx as a sibling span inside .dock-icon-wrapper.
+     * ──────────────────────────────────────────────────────────────────── */
+    .dock-active-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+      margin-top: 3px;
+      transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+    }
+
+    html.dark .dock-container,
+    .dark .dock-container {
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: rgba(40, 42, 54, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+        0 8px 32px rgba(0, 0, 0, 0.45),
+        0 2px 10px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.04); /* subtle outer glow instead of hard edge */
     }
   }
 
