@@ -72,68 +72,6 @@ const dockApps = [
   },
 ];
 
-const geetaQuotes = [
-  {
-    id: 1,
-    verse: "Chapter 2, Verse 47",
-    quote:
-      "You have the right to perform your duties, but you are not entitled to the fruits of your actions.",
-  },
-  {
-    id: 2,
-    verse: "Chapter 2, Verse 20",
-    quote:
-      "The soul is neither born, nor does it ever die; it is eternal, indestructible, and timeless.",
-  },
-  {
-    id: 3,
-    verse: "Chapter 6, Verse 5",
-    quote:
-      "Elevate yourself through the power of your own mind, and do not degrade yourself, for the mind can be your best friend or your worst enemy.",
-  },
-  {
-    id: 4,
-    verse: "Chapter 2, Verse 14",
-    quote:
-      "Pleasure and pain, heat and cold, come and go; learn to endure them, for they are temporary.",
-  },
-  {
-    id: 5,
-    verse: "Chapter 18, Verse 78",
-    quote:
-      "Wherever there is discipline and knowledge joined with devotion, there lies prosperity, victory, and steady wisdom.",
-  },
-  {
-    id: 6,
-    verse: "Chapter 3, Verse 21",
-    quote:
-      "Whatever a great person does, others follow; the standard they set, the world pursues.",
-  },
-  {
-    id: 7,
-    verse: "Chapter 2, Verse 48",
-    quote:
-      "Perform your duty with a balanced mind, abandoning all attachment to success or failure; such balance is called yoga.",
-  },
-  {
-    id: 8,
-    verse: "Chapter 6, Verse 6",
-    quote:
-      "For those who have conquered the mind, it is their greatest friend; for those who haven't, it remains their greatest enemy.",
-  },
-  {
-    id: 9,
-    verse: "Chapter 4, Verse 7",
-    quote:
-      "Whenever righteousness declines and unrighteousness rises, balance is restored.",
-  },
-  {
-    id: 10,
-    verse: "Chapter 3, Verse 35",
-    quote:
-      "It is better to fail at your own path than to succeed at imitating someone else's.",
-  },
-];
 
 const techStack = [
   {
@@ -193,7 +131,7 @@ const socials = [
   },
 ];
 
-export { navLinks, navIcons, dockApps, geetaQuotes, techStack, socials };
+export { navLinks, navIcons, dockApps, techStack, socials };
 
 const WORK_LOCATION = {
   id: 1,

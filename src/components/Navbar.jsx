@@ -4,11 +4,15 @@ import { useEffect, useState, useRef } from "react";
 import useWindowStore from "#store/window";
 import useThemeStore from "#store/theme"; // ADD THIS
 import Spotlight from "./Spotlight";
-import { Sun, Moon, Laptop } from "lucide-react";
+import { Sun, Moon, Laptop, Image } from "lucide-react";
+import useWallpaperStore from "#store/wallpaper";
+import { CONTROL_CENTER_CLICK_EVENT } from "./CustomizeHint"; // adjust path
+
 
 const Navbar = () => {
   const { openWindow, closeWindow, windows } = useWindowStore();
   const { theme, setTheme } = useThemeStore(); // ADD THIS
+  const { openPicker: openWallpaperPicker } = useWallpaperStore();
 
   const [currentTime, setCurrentTime] = useState(dayjs());
   const [isWifiOpen, setIsWifiOpen] = useState(false);
@@ -107,6 +111,7 @@ const Navbar = () => {
                   }
                   if (isControlCenter) {
                     setIsControlCenterOpen(!isControlCenterOpen);
+                    window.dispatchEvent(new Event(CONTROL_CENTER_CLICK_EVENT));
                   }
                 }}
               >
@@ -202,6 +207,22 @@ const Navbar = () => {
                         <Laptop className="size-3.5" />
                         <span className="text-xs font-medium">System</span>
                       </div>
+
+                      {/* Divider */}
+                      <div className="my-0.5 h-px bg-black/8 dark:bg-white/8" />
+
+                      {/* Wallpaper row */}
+                      <div
+                        className="flex w-full items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white"
+                        onClick={() => {
+                          setIsControlCenterOpen(false);
+                          openWallpaperPicker();
+                        }}
+                      >
+                        <Image className="size-3.5" />
+                        <span className="text-xs font-medium">Wallpaper</span>
+                      </div>
+
                     </div>
                   </div>
                 )}

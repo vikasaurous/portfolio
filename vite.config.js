@@ -28,6 +28,8 @@ export default defineConfig(({ mode }) => ({
         dirname(fileURLToPath(import.meta.url)),
         "src/windows",
       ),
+      // @ alias — mirrors shadcn convention, used by ui components
+      "@": resolve(dirname(fileURLToPath(import.meta.url)), "src"),
     },
   },
   server:
