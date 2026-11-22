@@ -47,7 +47,7 @@ const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
 const SCOPED_STYLES = `
   /* Custom slim scrollbar — only inside the wallpaper grid */
   .cb-grid::-webkit-scrollbar {
-    width: 40px;
+    width: 6px;
   }
   .cb-grid::-webkit-scrollbar-track {
     background: transparent;
@@ -55,6 +55,7 @@ const SCOPED_STYLES = `
   .cb-grid::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.25);
     border-radius: 99px;
+    min-height: 32px;
   }
   .cb-grid::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.40);

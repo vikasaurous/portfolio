@@ -24,3 +24,6 @@ agent/
 *.njsproj
 *.sln
 *.sw?
+
+scrollbar.patch
+.env

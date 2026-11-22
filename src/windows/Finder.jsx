@@ -15,8 +15,7 @@ const Finder = () => {
   const openItem = (item) => {
     if (item.fileType === "pdf") return openWindow("resume");
     if (item.kind === "folder") return setActiveLocation(item);
-    if (item.fileType === 'url' && item.href) {
-      // Open all URL files in the built-in Safari browser
+    if (item.fileType === "url" && item.href) {
       useSafariStore.getState().openUrl(item.href);
       openWindow("safari");
       return;
@@ -35,25 +34,25 @@ const Finder = () => {
           <li
             key={item.id}
             onClick={() => setActiveLocation(item)}
-            className={clsx(
-              item.id === activeLocation.id ? "active" : "not-active"
-            )}
+            className={clsx(item.id === activeLocation.id ? "active" : "not-active")}
           >
-            <img src={item.icon} alt={item.name} className="w-4" />
+            <img src={item.icon} alt={item.name} className="w-4 h-4 object-contain" />
             <p className="text-sm font-medium truncate">{item.name}</p>
           </li>
         ))}
       </ul>
     </div>
   );
+
   return (
     <>
       <div id="window-header">
         <WindowControl target="finder" />
-        <Search className="icon" />
+        <Search size={15} className="icon ml-auto opacity-50" />
       </div>
 
-      <div className="bg-white dark:bg-gray-800 flex h-full">
+      {/* Sidebar + Content row fills remaining height */}
+      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
         <div className="sidebar">
           {renderList("Favorites", Object.values(locations))}
           {renderList("Work", locations.work.children)}

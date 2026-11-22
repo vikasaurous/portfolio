@@ -12,19 +12,25 @@ const Contact = () => {
         <h2>Contact Me</h2>
       </div>
 
-      <div className="p-5 space-y-5 h-full flex flex-col justify-start items-center pt-12">
+      <div
+        style={{ flex: 1, overflow: "auto" }}
+        className="p-6 flex flex-col items-center gap-5 pt-10"
+      >
         <img
           src="images/vikas.png"
           alt="vikas"
-          className="w-20 h-20 rounded-full object-cover object-top scale-125"
+          className="w-20 h-20 rounded-full object-cover object-top shadow-lg"
+          style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.18)" }}
         />
-        <h3>Let's Connect</h3>
-        <p>Got an Idea? A bug to squash? Or just wanna talk tech? I'm in.</p>
+        <div className="text-center space-y-1">
+          <h3>Let&apos;s Connect</h3>
+          <p>Got an Idea? A bug to squash? Or just wanna talk tech? I&apos;m in.</p>
+        </div>
         <a
           href="https://mail.google.com/mail/?view=cm&fs=1&to=vikas.yadav.connect@gmail.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 font-medium text-gray-600  hover:text-black dark:text-white dark:hover:text-white hover:underline transition-all"
+          className="flex items-center gap-2 font-medium text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white hover:underline transition-all text-sm"
         >
           <Mail className="size-4" />
           vikas.yadav.connect@gmail.com

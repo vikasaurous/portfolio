@@ -69,7 +69,7 @@ const CustomizeHint = () => {
         position: "fixed",
         top: "130px",
         right: "165px",
-        zIndex: 10000,
+        zIndex: 1,
         userSelect: "none",
         pointerEvents: "none",
         animation: "customizeHintFadeIn 0.6s ease",

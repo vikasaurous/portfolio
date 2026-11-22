@@ -17,20 +17,18 @@ const ImageWindowContent = () => {
         <h2>{name}</h2>
       </div>
 
-      <div className="p-5 bg-white dark:bg-gray-800">
+      <div className="preview" style={{ flex: 1 }}>
         {imageUrl ? (
-          <div className="w-full">
-            <img
-              src={imageUrl}
-              alt={name}
-              className="w-full h-auto max-h-[70vh] object-contain rounded"
-            />
-          </div>
+          <img
+            src={imageUrl}
+            alt={name}
+            className="w-full h-auto max-h-[70vh] object-contain rounded"
+          />
         ) : null}
       </div>
     </>
   );
 };
 
-const ImageWindow = WindowWrapper(ImageWindowContent, 'imgfile')
+const ImageWindow = WindowWrapper(ImageWindowContent, "imgfile");
 export default ImageWindow;

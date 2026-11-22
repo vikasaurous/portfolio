@@ -117,7 +117,7 @@ const socials = [
   },
   {
     id: 3,
-    text: "Twitter/X",
+    text: "X",
     icon: "icons/twitter.svg",
     bg: "#000000d7 ",
     link: "https://x.com/vikasaurous",
