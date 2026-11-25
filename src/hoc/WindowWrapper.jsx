@@ -174,8 +174,15 @@ const WindowWrapper = (Component, windowKey) => {
       const el = ref.current;
       if (!el) return;
 
+      // The window body must stay interactive (Finder icons, terminal text,
+      // Safari pages…). Only the titlebar / toolbar may move the window.
+      const dragHandle =
+        el.querySelector("[data-drag-handle]") ||
+        el.querySelector("#window-header") ||
+        el;
+
       const [instance] = Draggable.create(el, {
-        trigger: el,  // allow press anywhere but check in onPress
+        trigger: dragHandle,
         onPress(e) {
           // Block drags that start on a resize handle
           if (e.target?.closest?.(".ww-resize")) {
