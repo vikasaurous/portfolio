@@ -4,7 +4,7 @@ import useWindowStore from '#store/window';
 import Toolbar from './components/Toolbar';
 import BrowserView from './components/BrowserView';
 
-const SafariBrowser = () => {
+const SafariBrowser = ({ hideWindowControls = false }) => {
   const toolbarRef  = useRef(null);
   const goBack      = useSafariStore((s) => s.goBack);
   const goForward   = useSafariStore((s) => s.goForward);
@@ -60,7 +60,7 @@ const SafariBrowser = () => {
 
   return (
     <div className="flex flex-col w-full h-full overflow-hidden">
-      <Toolbar ref={toolbarRef} />
+      <Toolbar ref={toolbarRef} hideWindowControls={hideWindowControls} />
       <BrowserView />
     </div>
   );

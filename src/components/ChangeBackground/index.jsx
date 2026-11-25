@@ -35,8 +35,15 @@ const SCOPED_STYLES = `
     border-radius: 99px;
     min-height: 32px;
   }
+  .cb-grid::-webkit-scrollbar-thumb:active,
   .cb-grid::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.40);
+  }
+  @media (max-width: 639px) {
+    .cb-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      max-height: 44dvh !important;
+    }
   }
 `;
 

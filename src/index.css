@@ -763,6 +763,9 @@ html.dark,
     @apply absolute top-12 left-[8%];
     width: 900px;
     height: 580px;
+  }
+
+  :is(#safari, .ios-sheet[data-app="safari"]) {
     display: flex;
     flex-direction: column;
 
@@ -816,13 +819,11 @@ html.dark,
     background: var(--lg-chrome-bg-inactive);
   }
 
-  html.dark #safari .safari-toolbar,
-  .dark #safari .safari-toolbar {
+  :is(html.dark, .dark) :is(#safari, .ios-sheet[data-app="safari"]) .safari-toolbar {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
-  html.dark #safari .safari-address-bar,
-  .dark #safari .safari-address-bar {
+  :is(html.dark, .dark) :is(#safari, .ios-sheet[data-app="safari"]) .safari-address-bar {
     border-color: rgba(255, 255, 255, 0.12);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.16),
@@ -833,6 +834,9 @@ html.dark,
   #terminal {
     @apply absolute top-32 left-1/12;
     width: 500px;
+  }
+
+  :is(#terminal, .ios-sheet-terminal) {
     display: flex;
     flex-direction: column;
     --lg-shell-bg: rgba(15, 17, 24, 0.72);
@@ -864,6 +868,9 @@ html.dark,
   #contact {
     @apply absolute top-30 left-5/12;
     width: 450px;
+  }
+
+  :is(#contact, .ios-sheet[data-app="contact"]) {
     display: flex;
     flex-direction: column;
 
@@ -958,6 +965,9 @@ html.dark,
     width: fit-content;
     max-width: calc(100vw - 48px);
     height: fit-content;
+  }
+
+  :is(#resume, .ios-sheet[data-app="resume"]) {
     display: flex;
     flex-direction: column;
 
@@ -975,11 +985,22 @@ html.dark,
     }
   }
 
+  .ios-sheet[data-app="resume"] .resume-body {
+    flex: 1;
+    max-height: none;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
   /* ── Text file viewer ───────────────────────────────────────────────────── */
   #txtfile {
     @apply absolute top-36 right-32;
     width: 580px;
     height: 410px;
+  }
+
+  :is(#txtfile, .ios-sheet[data-app="txtfile"]) {
     display: flex;
     flex-direction: column;
 
@@ -1002,11 +1023,15 @@ html.dark,
   #imgfile {
     @apply absolute top-40 left-2/12;
     width: 520px;
+  }
+
+  :is(#imgfile, .ios-sheet[data-app="imgfile"]) {
     display: flex;
     flex-direction: column;
 
     .preview {
       flex: 1;
+      overflow: auto;
       padding: 12px;
       background: var(--lg-pane-bg);
 
@@ -1302,6 +1327,369 @@ html.dark,
         0 0 12px rgba(52, 211, 153, 0.46);
     }
   }
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * MOBILE iOS 26 LIQUID GLASS SHELL & SPRINGBOARD
+   * ═══════════════════════════════════════════════════════════════════════════ */
+  .ios-shell {
+    position: relative;
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .ios-status-bar {
+    position: relative;
+    z-index: 40;
+    height: 48px;
+    padding: 0 18px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: rgba(255, 255, 255, 0.96);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+  }
+
+  .ios-status-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 11px;
+    border-radius: var(--lg-pill-radius);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--lg-text-primary);
+    background: var(--lg-pill-bg);
+    backdrop-filter: var(--lg-blur-subtle);
+    -webkit-backdrop-filter: var(--lg-blur-subtle);
+    border: 1px solid rgba(255, 255, 255, 0.36);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.48),
+      0 1px 4px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    text-shadow: none;
+  }
+
+  .ios-top-icon-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  :is(html.dark, .dark) .ios-status-btn {
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 2px 8px rgba(0, 0, 0, 0.28);
+  }
+
+  .ios-home-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    width: 100%;
+    max-width: 432px;
+    margin: 0 auto;
+    padding: 8px 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .ios-hero {
+    padding: 2px 2px 0;
+    color: rgba(255, 255, 255, 0.96);
+    text-shadow:
+      0 1px 8px rgba(0, 0, 0, 0.42),
+      0 2px 18px rgba(0, 0, 0, 0.24);
+  }
+
+  .ios-hero-eyebrow {
+    font-size: 15px;
+    font-weight: 500;
+    opacity: 0.92;
+  }
+
+  .ios-hero-title {
+    font-family: var(--font-georama);
+    font-size: 38px;
+    line-height: 1;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    margin-top: 2px;
+  }
+
+  .ios-widget-card {
+    position: relative;
+    padding: 14px 15px 12px;
+    border-radius: 24px;
+    background: var(--lg-shell-bg);
+    backdrop-filter: var(--lg-blur);
+    -webkit-backdrop-filter: var(--lg-blur);
+    box-shadow:
+      0 0 0 0.5px rgba(0, 0, 0, 0.08),
+      0 10px 28px rgba(0, 0, 0, 0.14),
+      0 22px 52px rgba(0, 0, 0, 0.16);
+    user-select: none;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: var(--lg-rim-gradient);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+  }
+
+  :is(html.dark, .dark) .ios-widget-card {
+    box-shadow:
+      0 0 0 0.5px rgba(255, 255, 255, 0.08),
+      0 12px 32px rgba(0, 0, 0, 0.42),
+      0 26px 58px rgba(0, 0, 0, 0.44);
+  }
+
+  .ios-matrix-selected {
+    transform: scale(1.22);
+    box-shadow:
+      0 0 0 1.5px rgba(255, 255, 255, 0.92),
+      0 3px 10px rgba(0, 0, 0, 0.24) !important;
+  }
+
+  .ios-app-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
+    &:active .ios-app-tile {
+      transform: scale(0.92);
+    }
+  }
+
+  .ios-app-tile {
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.14s ease;
+
+    img {
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.28));
+    }
+  }
+
+  .ios-app-label {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.96);
+    text-shadow:
+      0 1px 4px rgba(0, 0, 0, 0.58),
+      0 2px 10px rgba(0, 0, 0, 0.35);
+    line-height: 1.2;
+  }
+
+  .ios-bottom-chrome {
+    position: relative;
+    z-index: 30;
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 432px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 16px max(16px, env(safe-area-inset-bottom));
+  }
+
+  .ios-search-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: var(--lg-pill-radius);
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.94);
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.36);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      0 4px 14px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    transition: transform 0.12s ease;
+
+    &:active {
+      transform: scale(0.96);
+    }
+  }
+
+  :is(html.dark, .dark) .ios-search-pill {
+    background: rgba(24, 26, 36, 0.56);
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+
+  .ios-dock {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    place-items: center;
+    padding: 10px 8px;
+    border-radius: 30px;
+    backdrop-filter: blur(42px) saturate(200%) brightness(1.06);
+    -webkit-backdrop-filter: blur(42px) saturate(200%) brightness(1.06);
+    background: rgba(250, 252, 255, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.65),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+      0 12px 34px rgba(0, 0, 0, 0.24);
+  }
+
+  :is(html.dark, .dark) .ios-dock {
+    background: rgba(24, 26, 36, 0.44);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.28),
+      0 14px 36px rgba(0, 0, 0, 0.45);
+  }
+
+  .ios-dock-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: transform 0.14s ease;
+    -webkit-tap-highlight-color: transparent;
+
+    img {
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.28));
+    }
+
+    &:active {
+      transform: scale(0.9);
+    }
+  }
+
+  .ios-sheet {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100dvh;
+    background: var(--lg-shell-bg);
+    backdrop-filter: var(--lg-blur-heavy);
+    -webkit-backdrop-filter: var(--lg-blur-heavy);
+    padding-top: env(safe-area-inset-top);
+    animation: iosSheetIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+
+    &[data-app="safari"] .safari-toolbar {
+      padding: 0 10px;
+      gap: 6px;
+    }
+  }
+
+  .ios-sheet-terminal {
+    background: rgba(15, 17, 24, 0.88);
+  }
+
+  .ios-sheet-header {
+    display: grid;
+    grid-template-columns: 80px 1fr 80px;
+    align-items: center;
+    height: 52px;
+    padding: 0 12px;
+    flex-shrink: 0;
+    background: var(--lg-chrome-bg);
+    border-bottom: 1px solid var(--lg-separator);
+  }
+
+  .ios-sheet-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0a84ff;
+    background: transparent;
+    border: 0;
+    padding: 6px 4px;
+    cursor: pointer;
+    min-height: 36px;
+  }
+
+  .ios-sheet-title {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--lg-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ios-sheet-right-slot {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .ios-sheet-home-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--lg-chrome-bg);
+    border-top: 1px solid var(--lg-separator);
+    padding: 6px 0 max(8px, env(safe-area-inset-bottom));
+  }
+
+  .ios-home-indicator-btn {
+    padding: 6px 28px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ios-home-indicator {
+    display: block;
+    width: 120px;
+    height: 5px;
+    border-radius: var(--lg-pill-radius);
+    background: var(--lg-text-muted);
+    opacity: 0.55;
+  }
 }
 
 /* ─── Liquid Glass Reveal ─────────────────────────────────────────────────── */
@@ -1347,8 +1735,23 @@ html.dark,
   .lg-icon-btn,
   .lg-card,
   .lg-widget,
-  .dock-container {
+  .dock-container,
+  .ios-sheet,
+  .ios-app-tile,
+  .ios-dock-icon-btn {
+    animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes iosSheetIn {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -1456,16 +1859,19 @@ html.dark *,
 /* ── Terminal override ──────────────────────────────────────────────────── */
 /* Terminal always has a dark background — give it the dark-mode thumb
    regardless of the global light/dark class on <html>. */
-#terminal *::-webkit-scrollbar-thumb {
+#terminal *::-webkit-scrollbar-thumb,
+.ios-sheet-terminal *::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.18);
   background-clip: padding-box;
 }
 
-#terminal *::-webkit-scrollbar-thumb:hover {
+#terminal *::-webkit-scrollbar-thumb:hover,
+.ios-sheet-terminal *::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.32);
   background-clip: padding-box;
 }
 
-#terminal * {
+#terminal *,
+.ios-sheet-terminal * {
   scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
 }

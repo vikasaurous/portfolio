@@ -165,7 +165,7 @@ const SpotlightDialog = ({ onClose }) => {
                   src={item.icon}
                   alt=""
                   aria-hidden="true"
-                  className="size-7 object-contain"
+                  className="size-8 object-contain shrink-0"
                 />
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm truncate">{item.name}</p>
@@ -187,7 +187,7 @@ const SpotlightDialog = ({ onClose }) => {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[100000] flex items-start justify-center pt-32"
+      className="fixed inset-0 z-[100000] flex items-start justify-center pt-14 md:pt-32"
       onClick={onClose}
     >
       {/* Backdrop with blur */}

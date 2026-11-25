@@ -77,9 +77,19 @@ const HistoryEntry = memo(({ entry }) => {
 });
 HistoryEntry.displayName = "HistoryEntry";
 
-// ─── Terminal Component ───────────────────────────────────────────────────────
+const QUICK_COMMANDS = [
+  "help",
+  "whoami",
+  "skills",
+  "projects",
+  "experience",
+  "sudo hire-vikas",
+  "clear",
+];
 
-const Terminal = ({ isMaximized }) => {
+// ─── Terminal Body (shared between Desktop Window & Mobile iOS Sheet) ─────────
+
+export const TerminalBody = ({ bodyStyle, className = "", quickCommands = false }) => {
   const openWindow = useWindowStore((s) => s.openWindow);
   const theme = useThemeStore((s) => s.theme);
 
@@ -88,23 +98,16 @@ const Terminal = ({ isMaximized }) => {
   const [commandHistory,       setCommandHistory]       = useState([]);
   const [commandHistoryIndex,  setCommandHistoryIndex]  = useState(-1);
   const [inputValue,           setInputValue]           = useState("");
-  const [headerH,              setHeaderH]              = useState(48);
 
   // ── Refs ──
   const inputRef  = useRef(null);
   const bottomRef = useRef(null);
   const bodyRef   = useRef(null);
-  const headerRef = useRef(null);
 
-  // ── Measure header height when maximize state changes ──
+  // ── Focus input once on desktop mount (skip soft keyboard pop on touch phones) ─
   useEffect(() => {
-    if (headerRef.current) setHeaderH(headerRef.current.offsetHeight);
-  }, [isMaximized]);
-
-  // ── Focus input once on mount (not on every render like autoFocus) ──
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    if (!quickCommands) inputRef.current?.focus();
+  }, [quickCommands]);
 
   // ── Auto-scroll within the terminal body (never the page) ──
   useEffect(() => {
@@ -137,30 +140,26 @@ const Terminal = ({ isMaximized }) => {
   );
 
   // ── Command execution ──
-  const handleSubmit = useCallback(() => {
-    const raw = inputValue.trim();
+  const runCommand = useCallback((rawInput) => {
+    const raw = rawInput.trim();
     setInputValue("");
     setCommandHistoryIndex(-1);
     if (!raw) return;
 
-    // Capture commandHistory synchronously before the async setState
     setCommandHistory((prev) => {
       const updated = [raw, ...prev.filter((c) => c !== raw)];
       return updated.slice(0, MAX_HISTORY);
     });
 
-    // Read current commandHistory from the ref to avoid stale closure
     const ctx      = { commandHistory, theme };
     const response = executeCommand(raw, ctx);
     if (!response) return;
 
-    // clear: wipe history and exit
     if (response.type === "clear") {
       setHistory([]);
       return;
     }
 
-    // action: build user-visible feedback text
     const displayResponse =
       response.type === "action"
         ? {
@@ -177,7 +176,11 @@ const Terminal = ({ isMaximized }) => {
     ]);
 
     dispatchAction(response);
-  }, [inputValue, commandHistory, theme, dispatchAction]);
+  }, [commandHistory, theme, dispatchAction]);
+
+  const handleSubmit = useCallback(() => {
+    runCommand(inputValue);
+  }, [inputValue, runCommand]);
 
   // ── Keyboard handler ──
   const handleKeyDown = useCallback(
@@ -282,16 +285,8 @@ const Terminal = ({ isMaximized }) => {
     [handleSubmit, commandHistoryIndex, commandHistory, inputValue]
   );
 
-  // ─── Render ───────────────────────────────────────────────────────────────
-
   return (
-    <>
-      {/* Window chrome */}
-      <div id="window-header" ref={headerRef}>
-        <WindowControl target="terminal" />
-        <h2>Terminal — zsh</h2>
-      </div>
-
+    <div className={`flex flex-col flex-1 min-h-0 ${className}`.trim()}>
       {/* Terminal body */}
       <div
         ref={bodyRef}
@@ -300,22 +295,18 @@ const Terminal = ({ isMaximized }) => {
         aria-live="polite"
         onClick={handleBodyClick}
         className="
-          flex flex-col
+          flex flex-col flex-1 min-h-0
           bg-transparent
           text-gray-100
           font-mono text-xs leading-relaxed
-          overflow-y-scroll
+          overflow-y-auto overflow-x-hidden
           p-4
           cursor-text
         "
-        style={
-          isMaximized
-            ? { height: `calc(100vh - ${headerH}px)`, minHeight: 0 }
-            : { height: "340px", minHeight: 0 }
-        }
+        style={bodyStyle}
       >
         {/* Welcome banner */}
-        <div className="mb-4 text-[#34C759] dark:text-[#32d74b] whitespace-pre leading-tight">
+        <div className="mb-4 text-[#32d74b] whitespace-pre leading-tight overflow-x-auto">
           {WELCOME_BANNER.map((line, i) => (
             <div key={i}>{line || "\u00a0"}</div>
           ))}
@@ -354,6 +345,50 @@ const Terminal = ({ isMaximized }) => {
         {/* Auto-scroll anchor */}
         <div ref={bottomRef} aria-hidden="true" />
       </div>
+
+      {/* Mobile tap-to-run command bar */}
+      {quickCommands && (
+        <div className="flex items-center gap-1.5 px-3 py-2.5 border-t border-white/10 overflow-x-auto shrink-0">
+          {QUICK_COMMANDS.map((cmd) => (
+            <button
+              key={cmd}
+              type="button"
+              onClick={() => runCommand(cmd)}
+              className="px-3 py-1.5 rounded-full bg-white/10 active:bg-white/20 border border-white/15 text-[11px] font-mono font-medium text-gray-100 whitespace-nowrap cursor-pointer shrink-0"
+            >
+              {cmd}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── Desktop Window Wrapper Component ─────────────────────────────────────────
+
+const Terminal = ({ isMaximized }) => {
+  const [headerH, setHeaderH] = useState(48);
+  const headerRef = useRef(null);
+
+  useEffect(() => {
+    if (headerRef.current) setHeaderH(headerRef.current.offsetHeight);
+  }, [isMaximized]);
+
+  return (
+    <>
+      <div id="window-header" ref={headerRef}>
+        <WindowControl target="terminal" />
+        <h2>Terminal — zsh</h2>
+      </div>
+
+      <TerminalBody
+        bodyStyle={
+          isMaximized
+            ? { height: `calc(100vh - ${headerH}px)`, minHeight: 0 }
+            : { height: "340px", minHeight: 0 }
+        }
+      />
     </>
   );
 };
