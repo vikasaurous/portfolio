@@ -7,7 +7,7 @@ import  GeetaVerse  from "./components/GeetaVerse";
 import CustomizeHint from "./components/CustomizeHint";
 import useThemeStore from "#store/theme";
 import useWindowStore from "#store/window";
-import { Dock, Home, Navbar, Welcome, LiquidGlassReveal, ChangeBackground } from "#components";
+import { Dock, Home, Navbar, Welcome, LiquidGlassReveal, ChangeBackground, DesktopWidgets } from "#components";
 import Trash from "#windows/Trash.jsx";
 import { LazyWindows, windowLoaders } from "#windows/loaders.js";
 import useWallpaperStore, { WALLPAPERS } from "#store/wallpaper";
@@ -143,6 +143,7 @@ const App = () => {
 
         {/* Main Content */}
         <Home />
+        <DesktopWidgets />
 
         {/* Apps/Windows — lazy-loaded on first open, kept mounted afterward */}
         {WINDOW_KEYS.map((key) => (

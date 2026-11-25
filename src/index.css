@@ -1103,6 +1103,205 @@ html.dark,
       transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: opacity, transform;
   }
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * DESKTOP LIVE WIDGET — Apple Tahoe 12-Week Commit Heatgraph
+   * ═══════════════════════════════════════════════════════════════════════════ */
+  .lg-widget {
+    position: fixed;
+    padding: 15px 16px 13px;
+    border-radius: 24px;
+    background: var(--lg-shell-bg);
+    backdrop-filter: var(--lg-blur);
+    -webkit-backdrop-filter: var(--lg-blur);
+    box-shadow:
+      0 0 0 0.5px rgba(0, 0, 0, 0.08),
+      0 10px 28px rgba(0, 0, 0, 0.14),
+      0 22px 52px rgba(0, 0, 0, 0.16);
+    user-select: none;
+    touch-action: none;
+    cursor: grab;
+    transition:
+      opacity 0.28s ease,
+      filter 0.28s ease,
+      box-shadow 0.2s ease,
+      transform 0.16s ease;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: var(--lg-rim-gradient);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    &:hover {
+      opacity: 1;
+      filter: saturate(1);
+      box-shadow:
+        0 0 0 0.5px rgba(0, 0, 0, 0.1),
+        0 14px 36px rgba(0, 0, 0, 0.18),
+        0 28px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    &.lg-widget-receded {
+      opacity: 0.44;
+      filter: saturate(0.26);
+    }
+
+    &.lg-widget-dragging {
+      opacity: 1;
+      filter: saturate(1);
+      cursor: grabbing;
+      transform: scale(1.018);
+      box-shadow:
+        0 0 0 0.5px rgba(0, 0, 0, 0.12),
+        0 20px 46px rgba(0, 0, 0, 0.24),
+        0 34px 70px rgba(0, 0, 0, 0.24);
+    }
+  }
+
+  html.dark .lg-widget,
+  .dark .lg-widget {
+    box-shadow:
+      0 0 0 0.5px rgba(255, 255, 255, 0.08),
+      0 12px 32px rgba(0, 0, 0, 0.42),
+      0 26px 58px rgba(0, 0, 0, 0.44);
+  }
+
+  .lg-widget-badge {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(16, 185, 129, 0.16);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+
+  html.dark .lg-widget-badge,
+  .dark .lg-widget-badge {
+    color: #34d399;
+    border-color: rgba(52, 211, 153, 0.22);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+
+  .lg-widget-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 7px;
+    border-radius: var(--lg-pill-radius);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--lg-text-secondary);
+    background: var(--lg-pill-bg);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+  }
+
+  html.dark .lg-widget-status,
+  .dark .lg-widget-status {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .lg-matrix-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(7, 1fr);
+    gap: 5px;
+  }
+
+  .lg-matrix-spacer {
+    width: 100%;
+    aspect-ratio: 1;
+    pointer-events: none;
+  }
+
+  .lg-matrix-cell {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 5px;
+    outline: none;
+    transition: transform 0.14s ease, box-shadow 0.14s ease;
+
+    &[data-level="0"] {
+      background: rgba(0, 0, 0, 0.065);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.08);
+    }
+
+    &[data-level="1"] {
+      background: rgba(16, 185, 129, 0.32);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.38);
+    }
+
+    &[data-level="2"] {
+      background: rgba(16, 185, 129, 0.56);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    }
+
+    &[data-level="3"] {
+      background: rgba(16, 185, 129, 0.8);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.45),
+        0 0 8px rgba(16, 185, 129, 0.25);
+    }
+
+    &[data-level="4"] {
+      background: #10b981;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.55),
+        0 0 10px rgba(16, 185, 129, 0.4);
+    }
+
+    &:hover,
+    &:focus-visible {
+      transform: scale(1.22);
+      box-shadow:
+        0 0 0 1.5px rgba(255, 255, 255, 0.9),
+        0 3px 10px rgba(0, 0, 0, 0.22);
+    }
+  }
+
+  html.dark .lg-matrix-cell,
+  .dark .lg-matrix-cell {
+    &[data-level="0"] {
+      background: rgba(255, 255, 255, 0.07);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.32);
+    }
+
+    &[data-level="1"] {
+      background: rgba(52, 211, 153, 0.26);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    }
+
+    &[data-level="2"] {
+      background: rgba(52, 211, 153, 0.5);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    }
+
+    &[data-level="3"] {
+      background: rgba(52, 211, 153, 0.78);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        0 0 8px rgba(52, 211, 153, 0.28);
+    }
+
+    &[data-level="4"] {
+      background: #34d399;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.42),
+        0 0 12px rgba(52, 211, 153, 0.46);
+    }
+  }
 }
 
 /* ─── Liquid Glass Reveal ─────────────────────────────────────────────────── */
@@ -1147,6 +1346,7 @@ html.dark,
   .lg-pill,
   .lg-icon-btn,
   .lg-card,
+  .lg-widget,
   .dock-container {
     transition-duration: 0.01ms !important;
   }
