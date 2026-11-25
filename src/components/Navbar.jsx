@@ -4,8 +4,9 @@ import { useEffect, useState, useRef } from "react";
 import useWindowStore from "#store/window";
 import useThemeStore from "#store/theme"; // ADD THIS
 import Spotlight from "./Spotlight";
-import { Sun, Moon, Laptop, Image } from "lucide-react";
+import { Sun, Moon, Laptop, Image, LayoutGrid } from "lucide-react";
 import useWallpaperStore from "#store/wallpaper";
+import useWidgetStore from "#store/widgets";
 import { prefetchWindow } from "#windows/loaders.js";
 import { CONTROL_CENTER_CLICK_EVENT } from "./CustomizeHint"; // adjust path
 
@@ -29,6 +30,8 @@ const Navbar = () => {
   const theme = useThemeStore((s) => s.theme);
   const setTheme = useThemeStore((s) => s.setTheme);
   const openWallpaperPicker = useWallpaperStore((s) => s.openPicker);
+  const showWidgets = useWidgetStore((s) => s.showWidgets);
+  const toggleWidgets = useWidgetStore((s) => s.toggleWidgets);
 
   const [isWifiOpen, setIsWifiOpen] = useState(false);
   const [isControlCenterOpen, setIsControlCenterOpen] = useState(false);
@@ -186,7 +189,7 @@ const Navbar = () => {
 
                 {/* Tahoe Liquid Glass Control Center */}
                 {isControlCenter && isControlCenterOpen && (
-                  <div className="lg-popover absolute top-10 -right-4 w-36 p-2 z-[99999] cursor-default">
+                  <div className="lg-popover absolute top-10 -right-4 w-40 p-2 z-[99999] cursor-default">
                     <div className="flex w-full flex-col gap-1">
                       {[
                         { value: "light", label: "Light", icon: Sun },
@@ -224,6 +227,31 @@ const Navbar = () => {
                       >
                         <Image className="size-3.5" aria-hidden="true" />
                         <span className="text-xs font-medium">Wallpaper</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        aria-pressed={showWidgets}
+                        className={`flex w-full items-center justify-between gap-2 px-2.5 py-1.5 rounded-full cursor-pointer transition-all border-0 text-left ${
+                          showWidgets
+                            ? "bg-black/8 dark:bg-white/14 text-gray-900 dark:text-white"
+                            : "bg-transparent hover:bg-black/6 dark:hover:bg-white/10 text-gray-900 dark:text-gray-100"
+                        }`}
+                        onClick={toggleWidgets}
+                      >
+                        <span className="flex items-center gap-2">
+                          <LayoutGrid className="size-3.5" aria-hidden="true" />
+                          <span className="text-xs font-medium">Widgets</span>
+                        </span>
+                        <span
+                          className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
+                            showWidgets
+                              ? "bg-[#0a84ff] text-white"
+                              : "bg-black/10 dark:bg-white/12 text-gray-500 dark:text-gray-400"
+                          }`}
+                        >
+                          {showWidgets ? "On" : "Off"}
+                        </span>
                       </button>
 
                     </div>

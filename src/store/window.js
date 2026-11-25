@@ -67,4 +67,7 @@ export const selectIsActiveWindow = (state, windowKey) => {
   return target.zIndex === maxZ;
 };
 
+export const selectHasOpenWindow = (state) =>
+  Object.values(state.windows).some((win) => Boolean(win?.isOpen));
+
 export default useWindowStore;
