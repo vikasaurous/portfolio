@@ -83,7 +83,7 @@ export const searchableItems = [
 ];
 
 // Suggested quick actions
-export const suggestedActionIds = [
+const suggestedActionIds = [
   "about-4", // about-me.txt (Assuming id=4 from constants)
   "finder-portfolio",
   "resume-app",

@@ -32,12 +32,10 @@ const T = {
   DOCK_DELAY:    1.05,  // dock follows
   ICONS_DELAY:   1.2,   // icons follow
   ICONS_STAGGER: 0.04,  // 40ms per icon — barely noticeable stagger
-  WINDOWS_DELAY: 1.1,   // open windows appear with dock
 };
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
 
-const hasPlayedThisSession = () => sessionStorage.getItem(SESSION_KEY) === "true";
 const markPlayed           = () => sessionStorage.setItem(SESSION_KEY, "true");
 const prefersReducedMotion = () => window.matchMedia(REDUCED_MOTION_QUERY).matches;
 const isDark               = () => document.documentElement.classList.contains("dark");
@@ -67,7 +65,6 @@ const LiquidGlassReveal = ({ children }) => {
     const navbar  = document.querySelector("nav");
     const dock    = document.querySelector("#dock");
     const icons   = document.querySelectorAll("#home .folder, #home li");
-    const windows = document.querySelectorAll("[data-window]");
 
     // Opacity-led reveals with minimal translation.
     // The y values are small enough that they read as "appearing" not "moving."
@@ -106,20 +103,6 @@ const LiquidGlassReveal = ({ children }) => {
         stagger: reduced ? 0 : T.ICONS_STAGGER,
         clearProps: "all",
       });
-    }
-
-    // Open windows: opacity only — no translation, no scale
-    if (windows.length) {
-      gsap.fromTo(windows,
-        { opacity: 0 },
-        {
-          opacity: 1,
-          duration: reduced ? 0.2 : 0.4,
-          ease: EASE_ELEMENT,
-          delay: reduced ? 0 : T.WINDOWS_DELAY,
-          clearProps: "opacity",
-        }
-      );
     }
   }, []);
 

@@ -9,32 +9,10 @@
 //  • No external dependencies added.
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { X, Check, ImageIcon, Upload } from "lucide-react";
 import useWallpaperStore, { WALLPAPERS } from "#store/wallpaper";
-
-// ─── Animation variants ──────────────────────────────────────────────────────
-
-const sheetVariants = {
-  hidden: { y: "110%", opacity: 0, scale: 0.98 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    scale: 1,
-    transition: { type: "spring", damping: 30, stiffness: 320, mass: 0.9 },
-  },
-  exit: {
-    y: "110%",
-    opacity: 0,
-    transition: { duration: 0.22, ease: [0.4, 0, 1, 1] },
-  },
-};
-
-const overlayVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.18 } },
-  exit: { opacity: 0, transition: { duration: 0.18 } },
-};
 
 // ─── File validation ─────────────────────────────────────────────────────────
 
@@ -64,15 +42,11 @@ const SCOPED_STYLES = `
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-const ChangeBackground = () => {
-  const {
-    isPickerOpen,
-    closePicker,
-    activeWallpaperId,
-    customWallpaperUrl: appliedCustomUrl,
-    setWallpaper,
-    setCustomWallpaper,
-  } = useWallpaperStore();
+const ChangeBackgroundSheet = () => {
+  const closePicker = useWallpaperStore((s) => s.closePicker);
+  const activeWallpaperId = useWallpaperStore((s) => s.activeWallpaperId);
+  const setWallpaper = useWallpaperStore((s) => s.setWallpaper);
+  const setCustomWallpaper = useWallpaperStore((s) => s.setCustomWallpaper);
 
   // Local selection — not applied until user clicks Apply
   const [previewId, setPreviewId] = useState(() => activeWallpaperId ?? "default-light");
@@ -82,19 +56,58 @@ const ChangeBackground = () => {
   // Ref tracks the staged object URL so we can revoke it properly
   const stagedUrlRef = useRef(null);
   const fileInputRef = useRef(null);
+  const overlayRef = useRef(null);
+  const sheetRef = useRef(null);
+  const isClosingRef = useRef(false);
 
-  // ── Sync when picker opens ────────────────────────────────────────────────
-  useEffect(() => {
-    if (isPickerOpen) {
-      setPreviewId(activeWallpaperId ?? "default-light");
-      setPreviewCustom(null);
-      setUploadError("");
+  // ── Enter animation via GSAP ──────────────────────────────────────────────
+  useGSAP(() => {
+    if (overlayRef.current) {
+      gsap.fromTo(
+        overlayRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.18, ease: "power1.out" }
+      );
     }
-  }, [isPickerOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (sheetRef.current) {
+      gsap.fromTo(
+        sheetRef.current,
+        { yPercent: 110, opacity: 0, scale: 0.98 },
+        { yPercent: 0, opacity: 1, scale: 1, duration: 0.38, ease: "power3.out", clearProps: "transform" }
+      );
+    }
+  }, []);
 
-  // ── Cleanup object URLs on unmount ───────────────────────────────────────
+  // ── Exit animation before unmounting ──────────────────────────────────────
+  const animateClose = useCallback(() => {
+    if (isClosingRef.current) return;
+    isClosingRef.current = true;
+
+    if (overlayRef.current) {
+      gsap.killTweensOf(overlayRef.current);
+      gsap.to(overlayRef.current, { opacity: 0, duration: 0.18, ease: "power1.in" });
+    }
+    if (sheetRef.current) {
+      gsap.killTweensOf(sheetRef.current);
+      gsap.to(sheetRef.current, {
+        yPercent: 110,
+        opacity: 0,
+        duration: 0.22,
+        ease: "power2.in",
+        onComplete: closePicker,
+      });
+    } else {
+      closePicker();
+    }
+  }, [closePicker]);
+
+  // ── Cleanup object URLs & active tweens on unmount ────────────────────────
   useEffect(() => {
+    const overlay = overlayRef.current;
+    const sheet = sheetRef.current;
     return () => {
+      if (overlay) gsap.killTweensOf(overlay);
+      if (sheet) gsap.killTweensOf(sheet);
       if (stagedUrlRef.current) {
         URL.revokeObjectURL(stagedUrlRef.current);
         stagedUrlRef.current = null;
@@ -104,11 +117,10 @@ const ChangeBackground = () => {
 
   // ── Escape key ───────────────────────────────────────────────────────────
   useEffect(() => {
-    if (!isPickerOpen) return;
-    const onKey = (e) => { if (e.key === "Escape") closePicker(); };
+    const onKey = (e) => { if (e.key === "Escape") animateClose(); };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [isPickerOpen, closePicker]);
+  }, [animateClose]);
 
   // ── Select preset ─────────────────────────────────────────────────────────
   const handleSelectPreset = useCallback((id) => {
@@ -164,127 +176,117 @@ const ChangeBackground = () => {
 
   // ── Apply ─────────────────────────────────────────────────────────────────
   const handleApply = useCallback(() => {
+    if (isClosingRef.current) return;
     if (previewCustom) {
       stagedUrlRef.current = null; // ownership transferred to store
       setCustomWallpaper(previewCustom.objectUrl);
     } else if (previewId) {
       setWallpaper(previewId);
     }
-    closePicker();
-  }, [previewCustom, previewId, setCustomWallpaper, setWallpaper, closePicker]);
+    animateClose();
+  }, [previewCustom, previewId, setCustomWallpaper, setWallpaper, animateClose]);
 
   // ─────────────────────────────────────────────────────────────────────────
 
   return (
-    <AnimatePresence>
-      {isPickerOpen && (
-        <>
-          {/* Scoped CSS */}
-          <style>{SCOPED_STYLES}</style>
+    <>
+      {/* Scoped CSS */}
+      <style>{SCOPED_STYLES}</style>
 
-          {/* Scrim */}
-          <motion.div
-            key="cb-overlay"
-            aria-hidden="true"
-            style={{
-              position: "fixed",
-              inset: 0,
-              zIndex: 99990,
-              background: "rgba(0,0,0,0.45)",
-              backdropFilter: "blur(3px)",
-              WebkitBackdropFilter: "blur(3px)",
-            }}
-            variants={overlayVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            onClick={closePicker}
-          />
+      {/* Scrim */}
+      <div
+        ref={overlayRef}
+        aria-hidden="true"
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 99990,
+          background: "rgba(0,0,0,0.45)",
+          backdropFilter: "blur(3px)",
+          WebkitBackdropFilter: "blur(3px)",
+        }}
+        onClick={animateClose}
+      />
 
-          {/* Centering wrapper — uses flexbox so Framer Motion transforms
-              don't conflict with CSS translateX(-50%) centering. */}
+      {/* Centering wrapper */}
+      <div style={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 99991,
+        display: "flex",
+        justifyContent: "center",
+        pointerEvents: "none",
+      }}>
+
+      {/* Sheet — liquid glass panel */}
+      <div
+        ref={sheetRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Change Background"
+        style={{
+          width: "100%",
+          maxWidth: "670px",
+          pointerEvents: "auto",
+
+          // ── Liquid glass ──────────────────────────────────────────
+          // Very low opacity tint so wallpaper colors bleed through the blur.
+          // The inset top line acts as the "glass edge" catching the light.
+          background: "rgba(20, 22, 30, 0.44)",
+          backdropFilter: "blur(48px) saturate(200%) brightness(1.06)",
+          WebkitBackdropFilter: "blur(48px) saturate(200%) brightness(1.06)",
+
+          // Outer border — matching Tahoe specular catchlight
+          border: "1px solid rgba(255, 255, 255, 0.24)",
+          borderBottom: "none",
+
+          // Layered shadows: top inset highlight + ambient shadow
+          boxShadow: [
+            "inset 0 1px 0 rgba(255,255,255,0.52)",   // top highlight
+            "inset 1px 0 0 rgba(255,255,255,0.14)",   // left edge
+            "inset -1px 0 0 rgba(255,255,255,0.14)",  // right edge
+            "0 -24px 80px rgba(0,0,0,0.50)",          // ambient lift
+            "0 -4px 20px rgba(0,0,0,0.30)",           // close shadow
+          ].join(", "),
+
+          // Concentric Tahoe rounded top corners
+          borderRadius: "26px 26px 0 0",
+          overflow: "hidden",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Inner padding */}
+        <div style={{ padding: "24px 24px 20px" }}>
+
+          {/* ── Header ──────────────────────────────────────────────── */}
           <div style={{
-            position: "fixed",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 99991,
             display: "flex",
-            justifyContent: "center",
-            pointerEvents: "none",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "20px",
           }}>
-
-          {/* Sheet — liquid glass panel */}
-          <motion.div
-            key="cb-sheet"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Change Background"
-            style={{
-              width: "100%",
-              maxWidth: "670px",
-              pointerEvents: "auto",
-
-              // ── Liquid glass ──────────────────────────────────────────
-              // Very low opacity tint so wallpaper colors bleed through the blur.
-              // The inset top line acts as the "glass edge" catching the light.
-              background: "rgba(255, 255, 255, 0.08)",
-              backdropFilter: "blur(48px) saturate(200%) brightness(1.15)",
-              WebkitBackdropFilter: "blur(48px) saturate(200%) brightness(1.15)",
-
-              // Outer border — subtle white edge
-              border: "1px solid rgba(255, 255, 255, 0.22)",
-              borderBottom: "none",
-
-              // Layered shadows: top inset highlight + ambient shadow
-              boxShadow: [
-                "inset 0 1px 0 rgba(255,255,255,0.45)",   // top highlight
-                "inset 1px 0 0 rgba(255,255,255,0.12)",   // left edge
-                "inset -1px 0 0 rgba(255,255,255,0.12)",  // right edge
-                "0 -24px 80px rgba(0,0,0,0.50)",          // ambient lift
-                "0 -4px 20px rgba(0,0,0,0.30)",           // close shadow
-              ].join(", "),
-
-              // Fully rounded top corners — overflow-hidden clips inner content
-              borderRadius: "28px 28px 0 0",
-              overflow: "hidden",
-            }}
-            variants={sheetVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Inner padding */}
-            <div style={{ padding: "24px 24px 20px" }}>
-
-              {/* ── Header ──────────────────────────────────────────────── */}
-              <div style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: "20px",
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <ImageIcon
+                style={{ width: "15px", height: "15px", color: "rgba(255,255,255,0.7)" }}
+              />
+              <h2 style={{
+                fontSize: "13px",
+                fontWeight: 600,
+                color: "rgba(255,255,255,0.90)",
+                letterSpacing: "0.02em",
+                margin: 0,
               }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <ImageIcon
-                    style={{ width: "15px", height: "15px", color: "rgba(255,255,255,0.7)" }}
-                  />
-                  <h2 style={{
-                    fontSize: "13px",
-                    fontWeight: 600,
-                    color: "rgba(255,255,255,0.90)",
-                    letterSpacing: "0.02em",
-                    margin: 0,
-                  }}>
-                    Change Background
-                  </h2>
-                </div>
+                Change Background
+              </h2>
+            </div>
 
-                {/* Close button */}
-                <button
-                  type="button"
-                  aria-label="Close wallpaper picker"
-                  onClick={closePicker}
+            {/* Close button */}
+            <button
+              type="button"
+              aria-label="Close wallpaper picker"
+              onClick={animateClose}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -469,12 +471,16 @@ const ChangeBackground = () => {
               </div>
 
             </div>
-          </motion.div>
+          </div>
           </div>{/* end centering wrapper */}
         </>
-      )}
-    </AnimatePresence>
   );
+};
+
+const ChangeBackground = () => {
+  const isPickerOpen = useWallpaperStore((s) => s.isPickerOpen);
+  if (!isPickerOpen) return null;
+  return <ChangeBackgroundSheet />;
 };
 
 // ─── WallpaperThumb — isolated to keep the grid JSX clean ────────────────────
@@ -544,29 +550,6 @@ const WallpaperThumb = ({ src, label, isSelected, onClick }) => (
         <Check style={{ width: "10px", height: "10px", color: "#fff", strokeWidth: 3 }} />
       </span>
     )}
-
-    {/* Hover label */}
-    <span style={{
-      position: "absolute",
-      bottom: 0,
-      left: 0,
-      right: 0,
-      padding: "4px 6px",
-      fontSize: "9px",
-      fontWeight: 500,
-      color: "#fff",
-      textAlign: "center",
-      background: "linear-gradient(transparent, rgba(0,0,0,0.55))",
-      opacity: 0,
-      transition: "opacity 0.2s ease",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    }}
-      className="cb-thumb-label"
-    >
-      {label}
-    </span>
   </button>
 );
 

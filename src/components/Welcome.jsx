@@ -22,40 +22,68 @@ const renderText = (text, className, baseWeight = 400) => {
 const setupTextHover = (container, type) => {
   if (!container) return () => {};
 
-  const letters = container.querySelectorAll("span");
+  const letters = Array.from(container.querySelectorAll("span"));
   const { min, max, default: base } = FONT_WEIGHTS[type];
-  
-  const animateLetter = (letter, weight, duration = 0.25) => {
-    return gsap.to(letter, {
-      duration,
+
+  const proxies = letters.map((letter) => {
+    const proxy = { w: base };
+    const setWeight = gsap.quickTo(proxy, "w", {
+      duration: 0.25,
       ease: "power2.out",
-      fontVariationSettings: `'wght' ${weight}`
+      onUpdate: () => {
+        letter.style.fontVariationSettings = `'wght' ${Math.round(proxy.w)}`;
+      },
     });
-  }
+    return { proxy, setWeight };
+  });
 
-  const HandleMouseMove = (e) => {
-    const {left } = container.getBoundingClientRect();
-    const mouseX = e.clientX - left;
+  let containerLeft = 0;
+  let letterCenters = [];
+  let disposed = false;
 
-    letters.forEach((letter) => {
-      const { left: l, width: w } = letter.getBoundingClientRect();
-      const distance = Math.abs(mouseX - (l - left + w / 2))
-      const intensity = Math.exp(-(distance ** 2) / 20000)
-
-      animateLetter(letter, min + (max - min) * intensity)
+  const measure = () => {
+    if (disposed) return;
+    containerLeft = container.getBoundingClientRect().left;
+    letterCenters = letters.map((letter) => {
+      const { left, width } = letter.getBoundingClientRect();
+      return left - containerLeft + width / 2;
     });
-  }
-  
-  const HandleMouseLeave = () => letters.forEach((letter) => animateLetter(letter, base, 0.3))
+  };
 
-  container.addEventListener("mousemove", HandleMouseMove);
-  container.addEventListener("mouseleave", HandleMouseLeave);
+  measure();
+  document.fonts?.ready?.then(measure);
+
+  const handleMouseMove = (e) => {
+    if (letterCenters.length === 0) measure();
+    const mouseX = e.clientX - containerLeft;
+
+    for (let i = 0; i < letters.length; i++) {
+      const distance = Math.abs(mouseX - letterCenters[i]);
+      const intensity = Math.exp(-(distance ** 2) / 20000);
+      proxies[i].setWeight(min + (max - min) * intensity);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    for (let i = 0; i < proxies.length; i++) {
+      proxies[i].setWeight(base);
+    }
+  };
+
+  container.addEventListener("mouseenter", measure);
+  container.addEventListener("mousemove", handleMouseMove);
+  container.addEventListener("mouseleave", handleMouseLeave);
+  window.addEventListener("resize", measure);
 
   return () => {
-    container.removeEventListener("mousemove", HandleMouseMove);
-    container.removeEventListener("mouseleave", HandleMouseLeave);
-  }
-}
+    disposed = true;
+    container.removeEventListener("mouseenter", measure);
+    container.removeEventListener("mousemove", handleMouseMove);
+    container.removeEventListener("mouseleave", handleMouseLeave);
+    window.removeEventListener("resize", measure);
+    gsap.killTweensOf(proxies.map((p) => p.proxy));
+  };
+};
 const Welcome = () => {
   const titleRef = useRef(null);
   const subtitleRef = useRef(null);

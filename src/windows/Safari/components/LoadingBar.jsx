@@ -39,6 +39,9 @@ const LoadingBar = ({ status }) => {
           gsap.to(bar, { opacity: 0, duration: 0.28, delay: 0.08 });
         },
       });
+    } else {
+      tlRef.current?.kill();
+      gsap.set(bar, { scaleX: 0, opacity: 0 });
     }
   }, [status]);
 

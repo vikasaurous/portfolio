@@ -53,9 +53,12 @@ const findNearestFreeCell = (column, row, maxColumn, maxRow, occupied) => {
 };
 
 const Finder = () => {
-  const { openWindow } = useWindowStore();
-  const { setActiveLocation, activeLocation } = useLocationStore();
-  const { positions, initializePositions, setPosition } = useFinderStore();
+  const openWindow = useWindowStore((s) => s.openWindow);
+  const activeLocation = useLocationStore((s) => s.activeLocation);
+  const setActiveLocation = useLocationStore((s) => s.setActiveLocation);
+  const positions = useFinderStore((s) => s.positions);
+  const initializePositions = useFinderStore((s) => s.initializePositions);
+  const setPosition = useFinderStore((s) => s.setPosition);
 
   const contentRef = useRef(null);
   const dragRef = useRef(null);
@@ -89,11 +92,12 @@ const Finder = () => {
     const measure = () => {
       if (!content.clientWidth || !activeLocation?.children) return;
 
+      const currentPositions = useFinderStore.getState().positions;
       const entries = [];
 
       for (const item of activeLocation.children) {
         const key = `${activeLocation.id}:${item.id}`;
-        if (positions[key]) continue;
+        if (currentPositions[key]) continue;
 
         const element = content.querySelector(`[data-item-key="${key}"]`);
         if (!element) continue;
@@ -110,7 +114,7 @@ const Finder = () => {
     observer.observe(content);
 
     return () => observer.disconnect();
-  }, [activeLocation, positions, initializePositions]);
+  }, [activeLocation, initializePositions]);
 
   const handlePointerDown = (event, key) => {
     if (event.button !== 0) return;
@@ -128,8 +132,8 @@ const Finder = () => {
       element,
       startX: event.clientX,
       startY: event.clientY,
-      originX: itemRect.left - contentRect.left,
-      originY: itemRect.top - contentRect.top,
+      originX: element.offsetLeft,
+      originY: element.offsetTop,
       x: itemRect.left - contentRect.left,
       y: itemRect.top - contentRect.top,
       moved: false,
@@ -224,10 +228,14 @@ const Finder = () => {
       row = free.row;
     }
 
-    setPosition(drag.key, {
-      x: clamp(column * GRID_WIDTH, 0, maxX),
-      y: clamp(row * GRID_HEIGHT, 0, maxY),
-    });
+    const finalX = clamp(column * GRID_WIDTH, 0, maxX);
+    const finalY = clamp(row * GRID_HEIGHT, 0, maxY);
+
+    drag.element.style.left = `${finalX}px`;
+    drag.element.style.top = `${finalY}px`;
+    drag.element.style.right = "auto";
+
+    setPosition(drag.key, { x: finalX, y: finalY });
   };
 
   const handleItemClick = (event, item) => {
@@ -252,7 +260,15 @@ const Finder = () => {
         {items.map((item) => (
           <li
             key={item.id}
+            role="button"
+            tabIndex={0}
             onClick={() => setActiveLocation(item)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setActiveLocation(item);
+              }
+            }}
             className={clsx(item.id === activeLocation.id ? "active" : "not-active")}
           >
             <img src={item.icon} alt={item.name} className="w-4 h-4 object-contain" />
@@ -267,11 +283,14 @@ const Finder = () => {
     <>
       <div id="window-header">
         <WindowControl target="finder" />
-        <Search size={15} className="icon ml-auto opacity-50" />
+        <h2>{activeLocation?.name ?? "Finder"}</h2>
+        <span className="lg-icon-btn ml-auto pointer-events-none opacity-75" aria-hidden="true">
+          <Search size={14} />
+        </span>
       </div>
 
-      {/* Sidebar + Content row fills remaining height */}
-      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+      {/* Tahoe floating inset sidebar + frosted content pane */}
+      <div className="finder-body">
         <div className="sidebar">
           {renderList("Favorites", Object.values(locations))}
           {renderList("Work", locations.work.children)}
@@ -285,6 +304,8 @@ const Finder = () => {
               <li
                 key={item.id}
                 data-item-key={key}
+                role="button"
+                tabIndex={0}
                 className={clsx(
                   item.position,
                   selectedKey === key && "selected",
@@ -296,6 +317,12 @@ const Finder = () => {
                 onPointerUp={finishDrag}
                 onPointerCancel={finishDrag}
                 onClick={(event) => handleItemClick(event, item)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    handleItemClick(event, item);
+                  }
+                }}
               >
                 <img src={item.icon} alt={item.name} draggable={false} />
                 <p>{item.name}</p>

@@ -1,22 +1,23 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import wallpaperLight from "../assets/wallpaper.avif";
+import wallpaperDark from "../assets/wallpaper-dark.avif";
 
 // Wallpaper options bundled with the project.
-// `preview` is the thumbnail shown in the picker grid (PNG, fast to load).
-// `full` is the actual wallpaper applied to the desktop (avif for quality).
+// Default presets reuse the cached AVIF wallpapers resolved by Vite.
 export const WALLPAPERS = [
   {
     id: "default-light",
     label: "Sonoma Light",
-    preview: "/portfolio/images/wallpaper.png",
-    full: "/portfolio/images/wallpaper.avif",
+    preview: wallpaperLight,
+    full: wallpaperLight,
     theme: "light",
   },
   {
     id: "default-dark",
     label: "Sonoma Dark",
-    preview: "/portfolio/images/wallpaper-dark.png",
-    full: "/portfolio/images/wallpaper-dark.avif",
+    preview: wallpaperDark,
+    full: wallpaperDark,
     theme: "dark",
   },
   {

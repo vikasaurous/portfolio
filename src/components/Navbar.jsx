@@ -6,15 +6,30 @@ import useThemeStore from "#store/theme"; // ADD THIS
 import Spotlight from "./Spotlight";
 import { Sun, Moon, Laptop, Image } from "lucide-react";
 import useWallpaperStore from "#store/wallpaper";
+import { prefetchWindow } from "#windows/loaders.js";
 import { CONTROL_CENTER_CLICK_EVENT } from "./CustomizeHint"; // adjust path
 
+const NavbarClock = () => {
+  const [currentTime, setCurrentTime] = useState(() => dayjs());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(dayjs());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return <time className="tabular-nums">{currentTime.format("ddd MMM D h:mm:ss A")}</time>;
+};
 
 const Navbar = () => {
-  const { openWindow, closeWindow, windows } = useWindowStore();
-  const { theme, setTheme } = useThemeStore(); // ADD THIS
-  const { openPicker: openWallpaperPicker } = useWallpaperStore();
+  const openWindow = useWindowStore((s) => s.openWindow);
+  const closeWindow = useWindowStore((s) => s.closeWindow);
+  const theme = useThemeStore((s) => s.theme);
+  const setTheme = useThemeStore((s) => s.setTheme);
+  const openWallpaperPicker = useWallpaperStore((s) => s.openPicker);
 
-  const [currentTime, setCurrentTime] = useState(dayjs());
   const [isWifiOpen, setIsWifiOpen] = useState(false);
   const [isControlCenterOpen, setIsControlCenterOpen] = useState(false);
   const [isSpotlightOpen, setIsSpotlightOpen] = useState(false);
@@ -34,42 +49,45 @@ const Navbar = () => {
       }
     };
 
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setIsWifiOpen(false);
+        setIsControlCenterOpen(false);
+      }
+    };
+
     if (isWifiOpen || isControlCenterOpen) {
       document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleEscape);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, [isWifiOpen, isControlCenterOpen]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(dayjs());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const formattedTime = currentTime.format("ddd MMM D h:mm:ss A");
-
-  // ADD THIS FUNCTION
   const handleThemeChange = (newTheme) => {
-    console.log("Theme button clicked:", newTheme);
     setTheme(newTheme);
     setIsControlCenterOpen(false);
   };
 
   return (
-    <nav className="mac-navbar">
+    <nav>
       <div>
         <img src="./images/logo.svg" alt="apple logo" className="dark:invert" />
         <p className="font-bold">Vikas's Portfolio</p>
 
         <ul>
           {navLinks.map(({ id, name, type }) => (
-            <li key={id} onClick={() => openWindow(type)}>
-              <p>{name}</p>
+            <li key={id} onMouseEnter={() => prefetchWindow(type)}>
+              <button
+                type="button"
+                onClick={() => openWindow(type)}
+                className="lg-nav-item bg-transparent border-0 cursor-pointer flex items-center"
+              >
+                <p>{name}</p>
+              </button>
             </li>
           ))}
         </ul>
@@ -86,64 +104,67 @@ const Navbar = () => {
               <li
                 key={id}
                 ref={isWifi ? wifiRef : isControlCenter ? controlCenterRef : null}
-                className={`relative group`}
-                onClick={() => {
-                  if (id === 2) {
-                    setIsSpotlightOpen(true);
-                  }
-                  if (id === 3) {
-                    const aboutFile = locations.about.children.find(
-                      (child) => child.name === "about-me.txt"
-                    );
-                    if (aboutFile) {
-                      if (
-                        windows.txtfile.isOpen &&
-                        windows.txtfile.data?.name === "about-me.txt"
-                      ) {
-                        closeWindow("txtfile");
-                      } else {
-                        openWindow("txtfile", aboutFile);
-                      }
-                    }
-                  }
-                  if (isWifi) {
-                    setIsWifiOpen(!isWifiOpen);
-                  }
-                  if (isControlCenter) {
-                    setIsControlCenterOpen(!isControlCenterOpen);
-                    window.dispatchEvent(new Event(CONTROL_CENTER_CLICK_EVENT));
-                  }
+                className="relative group"
+                onMouseEnter={() => {
+                  if (id === 3) prefetchWindow("txtfile");
                 }}
               >
-                <img
-                  src={img}
-                  className="icon-hover cursor-pointer dark:invert"
-                  alt={`icon-${id}`}
-                />
+                <button
+                  type="button"
+                  aria-label={name}
+                  aria-expanded={isWifi ? isWifiOpen : isControlCenter ? isControlCenterOpen : undefined}
+                  aria-haspopup={isWifi || isControlCenter ? "true" : undefined}
+                  className="lg-nav-item bg-transparent border-0 cursor-pointer flex items-center"
+                  onClick={() => {
+                    if (id === 2) {
+                      setIsSpotlightOpen(true);
+                    }
+                    if (id === 3) {
+                      const aboutFile = locations.about.children.find(
+                        (child) => child.name === "about-me.txt"
+                      );
+                      if (aboutFile) {
+                        const txtWindow = useWindowStore.getState().windows.txtfile;
+                        if (
+                          txtWindow?.isOpen &&
+                          txtWindow.data?.name === "about-me.txt"
+                        ) {
+                          closeWindow("txtfile");
+                        } else {
+                          openWindow("txtfile", aboutFile);
+                        }
+                      }
+                    }
+                    if (isWifi) {
+                      setIsWifiOpen((prev) => !prev);
+                    }
+                    if (isControlCenter) {
+                      setIsControlCenterOpen((prev) => !prev);
+                      window.dispatchEvent(new Event(CONTROL_CENTER_CLICK_EVENT));
+                    }
+                  }}
+                >
+                  <img
+                    src={img}
+                    className="dark:invert"
+                    alt=""
+                    aria-hidden="true"
+                  />
+                </button>
 
                 {showTooltip && (
-                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2.5 py-1 bg-black/80 backdrop-blur text-white text-xs font-medium rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                  <div className="absolute -bottom-9 left-1/2 -translate-x-1/2 px-3 py-1 bg-white/85 dark:bg-[#222530]/90 backdrop-blur-xl text-gray-900 dark:text-gray-100 border border-white/50 dark:border-white/15 shadow-lg text-xs font-medium rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
                     {name}
                   </div>
                 )}
 
                 {isWifi && (
                   <>
-                    <div className="absolute top-0 right-0 size-2 bg-green-500 rounded-full border-2 border-white/50 animate-pulse" />
+                    <div className="absolute top-1 right-1.5 size-2 bg-green-500 rounded-full border border-white/60 animate-pulse pointer-events-none" />
 
                     {isWifiOpen && (
-                      <div
-                        className="absolute top-9 -right-10 w-52 bg-white/80 dark:bg-gray-800/80 backdrop-blur-2xl shadow-2xl rounded-xl p-4 border border-white/20 dark:border-gray-700/20 z-[99999] animate-in fade-in zoom-in-95 duration-200 cursor-default"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <div
-                          className="absolute -top-2 right-10 w-0 h-0
-                        border-l-[8px] border-l-transparent
-                        border-r-[8px] border-r-transparent
-                        border-b-[8px] border-b-white/70 dark:border-b-gray-800/70
-                        drop-shadow-sm"
-                        />
-                        <ul className="flex flex-col -space-y-3 text-left items-start">
+                      <div className="lg-popover absolute top-10 -right-10 w-56 p-4 z-[99999] cursor-default">
+                        <ul className="flex flex-col gap-2 text-left items-start">
                           {[
                             "Available (mostly)",
                             "Currently learning & building",
@@ -151,9 +172,9 @@ const Navbar = () => {
                           ].map((item) => (
                             <li
                               key={item}
-                              className="text-xs text-gray-600 dark:text-gray-300 font-medium flex items-center gap-2"
+                              className="text-xs text-gray-700 dark:text-gray-200 font-medium flex items-center gap-2"
                             >
-                              <span className="size-1.5 rounded-full bg-green-500 shrink-0" />
+                              <span className="size-1.5 rounded-full bg-green-500 shrink-0 shadow-[0_0_6px_rgba(34,197,94,0.6)]" />
                               {item}
                             </li>
                           ))}
@@ -163,65 +184,47 @@ const Navbar = () => {
                   </>
                 )}
 
-                {/* UPDATED CONTROL CENTER */}
+                {/* Tahoe Liquid Glass Control Center */}
                 {isControlCenter && isControlCenterOpen && (
-                  <div className="absolute top-9 -right-6 w-28 bg-white/80 dark:bg-gray-800/80 backdrop-blur-2xl shadow-2xl rounded-xl p-1.5 border border-white/20 dark:border-gray-700/20 z-[99999] animate-in fade-in zoom-in-95 duration-200 cursor-default">
-                    <div
-                      className="absolute -top-2 right-6 w-0 h-0
-                      border-l-[8px] border-l-transparent
-                      border-r-[8px] border-r-transparent
-                      border-b-[8px] border-b-white/80 dark:border-b-gray-800/80
-                      drop-shadow-sm"
-                    />
-                    <div className="flex w-full flex-col gap-0.5">
-                      <div 
-                        className={`flex w-full items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors ${
-                          theme === 'light' 
-                            ? 'bg-blue-500 text-white' 
-                            : 'hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white'
-                        }`}
-                        onClick={() => handleThemeChange('light')}
-                      >
-                        <Sun className="size-3.5" />
-                        <span className="text-xs font-medium">Light</span>
-                      </div>
-                      <div 
-                        className={`flex w-full items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors ${
-                          theme === 'dark' 
-                            ? 'bg-blue-500 text-white' 
-                            : 'hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white'
-                        }`}
-                        onClick={() => handleThemeChange('dark')}
-                      >
-                        <Moon className="size-3.5" />
-                        <span className="text-xs font-medium">Dark</span>
-                      </div>
-                      <div 
-                        className={`flex w-full items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors ${
-                          theme === 'system' 
-                            ? 'bg-blue-500 text-white' 
-                            : 'hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white'
-                        }`}
-                        onClick={() => handleThemeChange('system')}
-                      >
-                        <Laptop className="size-3.5" />
-                        <span className="text-xs font-medium">System</span>
-                      </div>
+                  <div className="lg-popover absolute top-10 -right-4 w-36 p-2 z-[99999] cursor-default">
+                    <div className="flex w-full flex-col gap-1">
+                      {[
+                        { value: "light", label: "Light", icon: Sun },
+                        { value: "dark", label: "Dark", icon: Moon },
+                        { value: "system", label: "System", icon: Laptop },
+                      ].map((item) => {
+                        const Icon = item.icon;
+                        return (
+                          <button
+                            key={item.value}
+                            type="button"
+                            onClick={() => handleThemeChange(item.value)}
+                            aria-pressed={theme === item.value}
+                            className={`flex w-full items-center gap-2 px-2.5 py-1.5 rounded-full cursor-pointer transition-all border-0 text-left ${
+                              theme === item.value
+                                ? "bg-[#0a84ff] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(10,132,255,0.35)]"
+                                : "bg-transparent hover:bg-black/6 dark:hover:bg-white/10 text-gray-900 dark:text-gray-100"
+                            }`}
+                          >
+                            <Icon className="size-3.5" aria-hidden="true" />
+                            <span className="text-xs font-medium">{item.label}</span>
+                          </button>
+                        );
+                      })}
 
-                      {/* Divider */}
-                      <div className="my-0.5 h-px bg-black/8 dark:bg-white/8" />
+                      <div className="my-0.5 h-px bg-black/8 dark:bg-white/10" />
 
-                      {/* Wallpaper row */}
-                      <div
-                        className="flex w-full items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white"
+                      <button
+                        type="button"
+                        className="flex w-full items-center gap-2 px-2.5 py-1.5 rounded-full cursor-pointer transition-colors bg-transparent border-0 hover:bg-black/6 dark:hover:bg-white/10 text-gray-900 dark:text-gray-100 text-left"
                         onClick={() => {
                           setIsControlCenterOpen(false);
                           openWallpaperPicker();
                         }}
                       >
-                        <Image className="size-3.5" />
+                        <Image className="size-3.5" aria-hidden="true" />
                         <span className="text-xs font-medium">Wallpaper</span>
-                      </div>
+                      </button>
 
                     </div>
                   </div>
@@ -231,7 +234,7 @@ const Navbar = () => {
           })}
         </ul>
 
-        <time className="tabular-nums">{formattedTime}</time>
+        <NavbarClock />
       </div>
 
       <Spotlight

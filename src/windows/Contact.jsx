@@ -1,5 +1,5 @@
 import { WindowControl } from "#components";
-import { Mail } from "lucide-react";
+import { Mail, ArrowUpRight } from "lucide-react";
 import { socials } from "#constants";
 import WindowWrapper from "#hoc/WindowWrapper";
 import React from "react";
@@ -12,15 +12,12 @@ const Contact = () => {
         <h2>Contact Me</h2>
       </div>
 
-      <div
-        style={{ flex: 1, overflow: "auto" }}
-        className="p-6 flex flex-col items-center gap-5 pt-10"
-      >
+      <div className="contact-body p-6 flex flex-col items-center gap-5 pt-9">
         <img
-          src="images/vikas.png"
+          src="images/vikas.webp"
           alt="vikas"
-          className="w-20 h-20 rounded-full object-cover object-top shadow-lg"
-          style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.18)" }}
+          className="w-20 h-20 rounded-full object-cover object-top ring-2 ring-white/60 dark:ring-white/20 shadow-lg"
+          style={{ boxShadow: "0 6px 22px rgba(0,0,0,0.22)" }}
         />
         <div className="text-center space-y-1">
           <h3>Let&apos;s Connect</h3>
@@ -30,22 +27,27 @@ const Contact = () => {
           href="https://mail.google.com/mail/?view=cm&fs=1&to=vikas.yadav.connect@gmail.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 font-medium text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white hover:underline transition-all text-sm"
+          className="lg-pill px-4 py-1.5 text-xs font-medium"
         >
-          <Mail className="size-4" />
+          <Mail className="size-3.5" />
           vikas.yadav.connect@gmail.com
         </a>
 
         <ul>
           {socials.map(({ id, bg, link, icon, text }) => (
-            <li key={id} style={{ background: bg }}>
+            <li key={id} className="lg-card group">
               <a
                 href={link}
                 target="_blank"
                 rel="noopener noreferrer"
                 title={text}
               >
-                <img src={icon} alt={text} className="size-5" />
+                <div className="flex items-center justify-between w-full">
+                  <span className="contact-icon-badge" style={{ background: bg }}>
+                    <img src={icon} alt="" aria-hidden="true" className="size-4 object-contain" />
+                  </span>
+                  <ArrowUpRight className="contact-ext-arrow size-3.5" aria-hidden="true" />
+                </div>
                 <p>{text}</p>
               </a>
             </li>

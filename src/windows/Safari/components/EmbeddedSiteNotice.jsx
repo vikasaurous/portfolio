@@ -84,7 +84,7 @@ const SafariCompassIcon = ({ pulse }) => (
 const SiteFavicon = ({ url }) => {
   const [loaded, setLoaded] = useState(false);
   let hostname = '';
-  try { hostname = new URL(url).hostname; } catch {}
+  try { hostname = new URL(url).hostname; } catch { /* invalid URL fallback */ }
 
   if (!hostname) return null;
 
@@ -108,42 +108,47 @@ const PrimaryButton = ({ onClick, children }) => (
     className="
       flex items-center justify-center gap-2
       w-full px-5 py-2.5
-      bg-blue-500 hover:bg-blue-600 active:bg-blue-700
-      text-white text-[13px] font-semibold rounded-xl
+      bg-[#0a84ff] hover:bg-[#0071e3] active:bg-[#005bb5]
+      text-white text-[13px] font-semibold rounded-full
       transition-all duration-150 cursor-pointer
-      shadow-[0_1px_3px_rgba(0,118,255,0.4)]
-      hover:shadow-[0_3px_10px_rgba(0,118,255,0.45)]
+      shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_4px_14px_rgba(10,132,255,0.38)]
       hover:-translate-y-px active:translate-y-0
     "
     aria-label="Open in new tab"
   >
     <ExternalLink className="w-3.5 h-3.5 shrink-0" strokeWidth={2.5} />
-    Open in New Tab
-  </button>
-);
-
-const SecondaryButton = ({ onClick, icon: Icon, children, id }) => (
-  <button
-    type="button"
-    id={id}
-    onClick={onClick}
-    className="
-      flex items-center justify-center gap-1.5
-      px-4 py-2
-      bg-white/60 dark:bg-white/[0.08]
-      hover:bg-white/80 dark:hover:bg-white/[0.13]
-      active:bg-white/40 dark:active:bg-white/[0.05]
-      text-gray-700 dark:text-gray-300
-      text-[12px] font-medium
-      rounded-lg border border-gray-200/80 dark:border-white/[0.12]
-      transition-all duration-150 cursor-pointer
-      hover:-translate-y-px active:translate-y-0
-    "
-  >
-    <Icon className="w-3.5 h-3.5 shrink-0" strokeWidth={2} />
     {children}
   </button>
 );
+
+const SecondaryButton = ({ onClick, icon, children, id }) => {
+  const Icon = icon;
+  return (
+    <button
+      type="button"
+      id={id}
+      onClick={onClick}
+      className="lg-pill px-4 py-2 text-[12px] font-medium cursor-pointer"
+    >
+      <Icon className="w-3.5 h-3.5 shrink-0" strokeWidth={2} />
+      {children}
+    </button>
+  );
+};
+
+function copyViaExecCommand(text) {
+  try {
+    const el = document.createElement('textarea');
+    el.value = text;
+    el.style.position = 'fixed';
+    el.style.opacity = '0';
+    document.body.appendChild(el);
+    el.focus();
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+  } catch { /* ignore clipboard fallback errors */ }
+}
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const EmbeddedSiteNotice = ({ url }) => {
@@ -167,46 +172,22 @@ const EmbeddedSiteNotice = ({ url }) => {
     const parsed = new URL(url);
     hostname = parsed.hostname;
     isHttps = parsed.protocol === 'https:';
-  } catch {}
+  } catch { /* ignore malformed URL */ }
 
   const handleCopy = () => {
-    // navigator.clipboard may be unavailable in non-secure or sandboxed contexts
-    const text = url;
-    if (navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(text).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      }).catch(() => {
-        // Fallback: execCommand (deprecated but widely supported)
-        try {
-          const el = document.createElement('textarea');
-          el.value = text;
-          el.style.position = 'fixed';
-          el.style.opacity = '0';
-          document.body.appendChild(el);
-          el.focus();
-          el.select();
-          document.execCommand('copy');
-          document.body.removeChild(el);
-        } catch {}
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      });
-    } else {
-      // execCommand fallback for older/restricted environments
-      try {
-        const el = document.createElement('textarea');
-        el.value = text;
-        el.style.position = 'fixed';
-        el.style.opacity = '0';
-        document.body.appendChild(el);
-        el.focus();
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-      } catch {}
+    const markCopied = () => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    };
+
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(url).then(markCopied).catch(() => {
+        copyViaExecCommand(url);
+        markCopied();
+      });
+    } else {
+      copyViaExecCommand(url);
+      markCopied();
     }
   };
 
@@ -228,12 +209,11 @@ const EmbeddedSiteNotice = ({ url }) => {
         }
       `}</style>
 
-      {/* Full-area container with blurred glass background */}
+      {/* Full-area container on tiered glass */}
       <div
         className="
           absolute inset-0 flex items-center justify-center
-          bg-[#f2f2f7]/80 dark:bg-[#1c1c1e]/80
-          backdrop-blur-[20px]
+          bg-transparent
         "
         style={{
           opacity: mounted ? 1 : 0,
@@ -243,13 +223,8 @@ const EmbeddedSiteNotice = ({ url }) => {
         {/* Card */}
         <div
           className="
-            relative w-[380px] max-w-[92vw]
-            bg-white/70 dark:bg-[#2c2c2e]/75
-            backdrop-blur-[40px]
-            rounded-2xl
-            border border-white/60 dark:border-white/[0.1]
-            shadow-[0_20px_60px_rgba(0,0,0,0.12),0_4px_16px_rgba(0,0,0,0.08)]
-            dark:shadow-[0_20px_60px_rgba(0,0,0,0.5),0_4px_16px_rgba(0,0,0,0.3)]
+            lg-popover relative w-[380px] max-w-[92vw]
+            rounded-[22px]
             overflow-hidden
           "
           style={{
@@ -288,7 +263,7 @@ const EmbeddedSiteNotice = ({ url }) => {
             </h2>
 
             {/* Subtitle */}
-            <p className="text-[13px] leading-[1.55] text-gray-500 dark:text-gray-400 mb-6 max-w-[300px]">
+            <p className="text-[13px] leading-[1.55] text-gray-600 dark:text-gray-300/80 mb-6 max-w-[300px]">
               This website prevents itself from being opened inside embedded
               browsers. This is a security policy defined by the website, not
               an issue with your device.
@@ -298,9 +273,9 @@ const EmbeddedSiteNotice = ({ url }) => {
             <div
               className="
                 w-full mb-6 rounded-xl overflow-hidden
-                divide-y divide-gray-100 dark:divide-white/[0.06]
-                border border-gray-100 dark:border-white/[0.07]
-                bg-gray-50/60 dark:bg-black/[0.15]
+                divide-y divide-black/[0.06] dark:divide-white/[0.07]
+                border border-black/[0.07] dark:border-white/[0.08]
+                bg-black/[0.03] dark:bg-white/[0.05]
               "
             >
               {/* URL row */}

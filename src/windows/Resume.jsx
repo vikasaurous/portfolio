@@ -21,17 +21,19 @@ const Resume = () => {
         <a
           href={`${import.meta.env.BASE_URL}files/resume.pdf`}
           download="Vikas_Yadav_Resume.pdf"
-          className="cursor-pointer"
+          className="lg-icon-btn ml-auto"
           title="Download Resume"
+          aria-label="Download Resume"
         >
-          {" "}
-          <Download className="icon" />
+          <Download size={14} />
         </a>
       </div>
 
-      <Document file={`${import.meta.env.BASE_URL}files/resume.pdf`}>
-        <Page pageNumber={1} renderTextLayer renderAnnotationLayer />
-      </Document>
+      <div className="resume-body">
+        <Document file={`${import.meta.env.BASE_URL}files/resume.pdf`}>
+          <Page pageNumber={1} renderTextLayer renderAnnotationLayer />
+        </Document>
+      </div>
     </>
   );
 };

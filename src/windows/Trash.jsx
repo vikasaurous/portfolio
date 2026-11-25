@@ -6,22 +6,26 @@ import { useEffect } from "react";
 
 
 const Trash = () => {
-  const { setActiveLocation, activeLocation } = useLocationStore();
-  const { openWindow, closeWindow, windows } = useWindowStore();
+  const isTrashOpen = useWindowStore((s) => s.windows.trash.isOpen);
+  const openWindow = useWindowStore((s) => s.openWindow);
+  const closeWindow = useWindowStore((s) => s.closeWindow);
+  const setActiveLocation = useLocationStore((s) => s.setActiveLocation);
 
   useEffect(() => {
-    if (windows.trash.isOpen) {
-      const trashOriginRect = windows.trash.originRect;
+    if (!isTrashOpen) return;
 
-      if (windows.finder.isOpen && activeLocation.id === locations.trash.id) {
-        closeWindow("finder");
-      } else {
-        setActiveLocation(locations.trash);
-        openWindow("finder", null, trashOriginRect);
-      }
-      closeWindow("trash");
+    const { windows } = useWindowStore.getState();
+    const { activeLocation } = useLocationStore.getState();
+    const trashOriginRect = windows.trash.originRect;
+
+    if (windows.finder.isOpen && activeLocation.id === locations.trash.id) {
+      closeWindow("finder");
+    } else {
+      setActiveLocation(locations.trash);
+      openWindow("finder", null, trashOriginRect);
     }
-  }, [windows.trash.isOpen]);
+    closeWindow("trash");
+  }, [isTrashOpen, openWindow, closeWindow, setActiveLocation]);
 
   return null;
 };

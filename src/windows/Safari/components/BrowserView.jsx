@@ -63,35 +63,38 @@ const BrowserView = () => {
   const timeoutRef = useRef(null);
 
   // ── Local state for the blocked-domain animation flow ─────────────────────
-  // Kept local to avoid polluting the Zustand store with UI-only state.
-  const [statusMsg, setStatusMsg]     = useState('');   // status-bar overlay text
-  const [showNotice, setShowNotice]   = useState(false); // show EmbeddedSiteNotice
+  // Keyed by navigation so URL/reload transitions reset synchronously on render.
+  const navKey    = `${tab?.url ?? ''}:${tab?.reloadKey ?? 0}`;
+  const isBlocked = isBlockedDomain(tab?.url);
 
-  // ── Reset notice when URL changes ─────────────────────────────────────────
-  useEffect(() => {
-    setShowNotice(false);
-    setStatusMsg('');
-  }, [tab?.url, tab?.reloadKey]);
+  const [statusState, setStatusState] = useState({ key: '', msg: '' });
+  const [noticeKey, setNoticeKey]     = useState('');
+
+  const statusMsg  = statusState.key === navKey ? statusState.msg : '';
+  const showNotice = noticeKey === navKey;
 
   // ── Blocked-domain detection — fires first, before any iframe work ─────────
   useEffect(() => {
-    if (!tab?.url || tab.status !== 'loading') return;
-    if (!isBlockedDomain(tab.url)) return;   // not blocked — normal iframe flow
+    if (!tab?.url || tab.status !== 'loading' || !isBlocked) return;
 
-    // Run the macOS loading sequence
     const cancel = runBlockedSequence(
-      (msg) => setStatusMsg(msg),
+      (msg) => setStatusState({ key: navKey, msg }),
       () => {
         // Tell the store to finish "loading" → LoadingBar completes its fill
         setStatus('error');
-        setStatusMsg('');
-        // Small delay so the LoadingBar fade-out starts before card appears
-        setTimeout(() => setShowNotice(true), 180);
+        setStatusState({ key: '', msg: '' });
       },
     );
 
     return cancel;
-  }, [tab?.url, tab?.reloadKey, tab?.status, setStatus]);
+  }, [tab?.url, tab?.status, isBlocked, navKey, setStatus]);
+
+  // Small delay after blocked sequence finishes so LoadingBar fade-out starts first
+  useEffect(() => {
+    if (!isBlocked || tab?.status !== 'error') return;
+    const timer = setTimeout(() => setNoticeKey(navKey), 180);
+    return () => clearTimeout(timer);
+  }, [isBlocked, tab?.status, navKey]);
 
   // ── Pre-flight on every new navigation (non-blocked domains only) ──────────
   useEffect(() => {
@@ -144,7 +147,6 @@ const BrowserView = () => {
   if (!tab) return null;
 
   const showStart   = !tab.url;
-  const isBlocked   = isBlockedDomain(tab.url);
   // During the blocked animation, status is still 'loading'.
   // After the sequence, status becomes 'error' and showNotice=true.
   const showError   = tab.status === 'error' && !isBlocked && !showNotice;
@@ -198,7 +200,7 @@ const BrowserView = () => {
           ref={iframeRef}
           src={tab.url}
           title={tab.title || 'Safari'}
-          className="w-full h-full border-0"
+          className="w-full h-full border-0 bg-white"
           style={{ display: showFrame ? 'block' : 'none' }}
           onLoad={handleLoad}
           onError={handleError}

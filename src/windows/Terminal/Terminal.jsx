@@ -39,9 +39,9 @@ const nextId = () => String(++_nextId);
 
 /** memo: Prompt never changes — avoid re-rendering on every keystroke. */
 const Prompt = memo(() => (
-  <span className="text-[#34C759] dark:text-[#32d74b] font-semibold select-none shrink-0">
+  <span className="text-[#32d74b] font-semibold select-none shrink-0">
     {PROMPT_USER}@{PROMPT_HOST}
-    <span className="text-gray-400 dark:text-gray-500"> {PROMPT_DIR} % </span>
+    <span className="text-gray-400"> {PROMPT_DIR} % </span>
   </span>
 ));
 Prompt.displayName = "Prompt";
@@ -55,7 +55,7 @@ const HistoryEntry = memo(({ entry }) => {
       {/* Prompt + command */}
       <div className="flex items-baseline gap-1 flex-wrap">
         <Prompt />
-        <span className="text-gray-800 dark:text-gray-100 break-all">
+        <span className="text-gray-100 break-all">
           {entry.command}
         </span>
       </div>
@@ -64,9 +64,7 @@ const HistoryEntry = memo(({ entry }) => {
       {entry.response.type !== "clear" && (
         <div
           className={`mt-0.5 pl-2 whitespace-pre font-mono ${
-            isError
-              ? "text-[#FF3B30] dark:text-[#ff453a]"
-              : "text-gray-700 dark:text-gray-300"
+            isError ? "text-[#ff453a]" : "text-gray-300"
           }`}
         >
           {lines.map((line, i) => (
@@ -82,8 +80,8 @@ HistoryEntry.displayName = "HistoryEntry";
 // ─── Terminal Component ───────────────────────────────────────────────────────
 
 const Terminal = ({ isMaximized }) => {
-  const { openWindow } = useWindowStore();
-  const { theme }      = useThemeStore();
+  const openWindow = useWindowStore((s) => s.openWindow);
+  const theme = useThemeStore((s) => s.theme);
 
   // ── State ──
   const [history,              setHistory]              = useState([]);
@@ -303,7 +301,7 @@ const Terminal = ({ isMaximized }) => {
         onClick={handleBodyClick}
         className="
           flex flex-col
-          bg-gray-900 dark:bg-[#1e1e1e]
+          bg-transparent
           text-gray-100
           font-mono text-xs leading-relaxed
           overflow-y-scroll

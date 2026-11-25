@@ -6,7 +6,6 @@ import BrowserView from './components/BrowserView';
 
 const SafariBrowser = () => {
   const toolbarRef  = useRef(null);
-  const { windows } = useWindowStore();
   const goBack      = useSafariStore((s) => s.goBack);
   const goForward   = useSafariStore((s) => s.goForward);
   const reload      = useSafariStore((s) => s.reload);
@@ -14,8 +13,8 @@ const SafariBrowser = () => {
 
   // ── Keyboard shortcuts — active only when Safari has focus ─────────────────
   const handleKeyDown = useCallback((e) => {
-    // Guard: only intercept when Safari is open and topmost
-    if (!windows.safari?.isOpen) return;
+    // Guard: only intercept when Safari is open
+    if (!useWindowStore.getState().windows.safari?.isOpen) return;
 
     const isMac = /Mac|iPhone|iPad/.test(navigator.platform ?? '');
     const ctrl  = isMac ? e.metaKey : e.ctrlKey;
@@ -52,7 +51,7 @@ const SafariBrowser = () => {
     if (e.key === 'Escape') {
       stopLoading();
     }
-  }, [windows.safari?.isOpen, goBack, goForward, reload, stopLoading]);
+  }, [goBack, goForward, reload, stopLoading]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);

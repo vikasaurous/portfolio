@@ -4,16 +4,13 @@ const STORAGE_KEY = "portfolio_customize_hint_dismissed";
 export const CONTROL_CENTER_CLICK_EVENT = "control-center-clicked";
 
 const CustomizeHint = () => {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
+  const [visible, setVisible] = useState(() => {
     try {
-      const dismissed = localStorage.getItem(STORAGE_KEY);
-      if (!dismissed) setVisible(true);
+      return !localStorage.getItem(STORAGE_KEY);
     } catch {
-      setVisible(true);
+      return true;
     }
-  }, []);
+  });
 
   // Hide + remember once Control Center is opened
   useEffect(() => {
@@ -31,32 +28,6 @@ const CustomizeHint = () => {
 
     return () => {
       window.removeEventListener(CONTROL_CENTER_CLICK_EVENT, hideHint);
-    };
-  }, []);
-
-  // Ctrl+R / Cmd+R re-summons the hint instead of refreshing
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      const isRefreshCombo =
-        (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "r";
-
-      if (isRefreshCombo) {
-        e.preventDefault();
-
-        try {
-          localStorage.removeItem(STORAGE_KEY);
-        } catch {
-          // Ignore storage errors
-        }
-
-        setVisible(true);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 

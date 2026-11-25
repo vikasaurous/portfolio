@@ -5,18 +5,21 @@ import { ChevronLeft, ChevronRight, RotateCw, X, Globe, Lock, Home } from 'lucid
 
 // ─── NavButton ────────────────────────────────────────────────────────────────
 
-const NavButton = ({ icon: Icon, onClick, disabled, title }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    title={title}
-    aria-label={title}
-    className="w-7 h-7 flex items-center justify-center rounded-md text-[#555] dark:text-gray-400 hover:bg-black/[0.07] dark:hover:bg-white/[0.07] disabled:opacity-25 disabled:cursor-not-allowed transition-colors cursor-pointer shrink-0"
-  >
-    <Icon className="w-4 h-4" strokeWidth={2} />
-  </button>
-);
+const NavButton = ({ icon, onClick, disabled, title }) => {
+  const Icon = icon;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      title={title}
+      aria-label={title}
+      className="lg-icon-btn"
+    >
+      <Icon className="w-4 h-4" strokeWidth={2} />
+    </button>
+  );
+};
 
 // ─── Toolbar — forwarded ref exposes focusAddress() ───────────────────────────
 

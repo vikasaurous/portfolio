@@ -4,28 +4,26 @@ import useWindowStore from "#store/window";
 import React from "react";
 
 const ImageWindowContent = () => {
-  const { windows } = useWindowStore();
-  const data = windows.imgfile?.data;
+  const data = useWindowStore((s) => s.windows.imgfile?.data);
 
-  if (!data) return null;
-
-  const { name, imageUrl } = data;
+  const { name, imageUrl } = data ?? {};
   return (
     <>
       <div id="window-header">
         <WindowControl target="imgfile" />
-        <h2>{name}</h2>
+        <h2>{name ?? ""}</h2>
       </div>
 
-      <div className="preview" style={{ flex: 1 }}>
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={name}
-            className="w-full h-auto max-h-[70vh] object-contain rounded"
-          />
-        ) : null}
-      </div>
+      {data ? (
+        <div className="preview">
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={name ?? ""}
+            />
+          ) : null}
+        </div>
+      ) : null}
     </>
   );
 };

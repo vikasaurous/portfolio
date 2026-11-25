@@ -6,7 +6,7 @@ import { immer } from 'zustand/middleware/immer';
 
 const genId = () => Math.random().toString(36).slice(2, 9);
 
-export const normalizeUrl = (raw) => {
+const normalizeUrl = (raw) => {
   if (!raw) return '';
   const s = raw.trim();
   if (!s) return '';
@@ -135,8 +135,14 @@ const useSafariStore = create(
           try { const v = sessionStorage.getItem(k); return v ? JSON.parse(v) : null; }
           catch { return null; }
         },
-        setItem: (k, v) => { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch {} },
-        removeItem: (k) => { try { sessionStorage.removeItem(k); } catch {} },
+        setItem: (k, v) => {
+          try { sessionStorage.setItem(k, JSON.stringify(v)); }
+          catch { /* ignore quota or private-mode errors */ }
+        },
+        removeItem: (k) => {
+          try { sessionStorage.removeItem(k); }
+          catch { /* ignore storage errors */ }
+        },
       },
       // Don't persist loading state — always start fresh on reload
       partialize: (s) => ({

@@ -1,8 +1,56 @@
-import useWindowStore from "#store/window";
+import useWindowStore, { selectIsActiveWindow } from "#store/window";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Draggable } from "gsap/Draggable";
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const restoreWindowInlineSize = (el, restoreRef) => {
+  if (!restoreRef.current) return;
+  const { inlineW, inlineH } = restoreRef.current;
+  gsap.set(el, { clearProps: "width,height,top,left,borderRadius" });
+  if (inlineW) el.style.width = inlineW;
+  if (inlineH) el.style.height = inlineH;
+  restoreRef.current = null;
+};
+
+const getNavBottom = () => {
+  const nav = document.querySelector("nav");
+  return nav ? Math.ceil(nav.getBoundingClientRect().bottom) : 0;
+};
+
+const computeWindowDragBounds = (el) => {
+  const navBottom = getNavBottom();
+  const baseLeft = el.offsetLeft || 0;
+  const baseTop = el.offsetTop || 0;
+  const elW = el.offsetWidth || MIN_W;
+  const keepVisibleX = Math.min(160, Math.round(elW * 0.6));
+  const minVisualTop = navBottom;
+  const maxVisualTop = Math.max(navBottom, window.innerHeight - 52);
+  const minVisualLeft = keepVisibleX - elW;
+  const maxVisualLeft = Math.max(minVisualLeft, window.innerWidth - keepVisibleX);
+
+  return {
+    minX: minVisualLeft - baseLeft,
+    maxX: maxVisualLeft - baseLeft,
+    minY: minVisualTop - baseTop,
+    maxY: maxVisualTop - baseTop,
+  };
+};
+
+const clampWindowToViewport = (el, lastPosRef) => {
+  if (!el || el.style.display === "none") return;
+  const bounds = computeWindowDragBounds(el);
+  const curX = Number(gsap.getProperty(el, "x")) || 0;
+  const curY = Number(gsap.getProperty(el, "y")) || 0;
+  const nextX = Math.min(Math.max(curX, bounds.minX), bounds.maxX);
+  const nextY = Math.min(Math.max(curY, bounds.minY), bounds.maxY);
+
+  if (nextX !== curX || nextY !== curY) {
+    gsap.set(el, { x: nextX, y: nextY });
+    lastPosRef.current = { x: nextX, y: nextY };
+  }
+};
 
 // ─── Resize directions ────────────────────────────────────────────────────────
 const RESIZE_DIRS = ["n", "s", "e", "w", "nw", "ne", "sw", "se"];
@@ -18,8 +66,11 @@ const MIN_H = 180;
 // ─── HOC ──────────────────────────────────────────────────────────────────────
 const WindowWrapper = (Component, windowKey) => {
   const Wrapped = (props) => {
-    const { focusWindow, windows } = useWindowStore();
-    const { isOpen, zIndex, originRect, isMaximized } = windows[windowKey];
+    const focusWindow = useWindowStore((s) => s.focusWindow);
+    const isActive = useWindowStore((s) => selectIsActiveWindow(s, windowKey));
+    const { isOpen, zIndex, originRect, isMaximized } = useWindowStore(
+      (s) => s.windows[windowKey]
+    );
 
     const ref          = useRef(null);
     const zIndexRef    = useRef(zIndex);
@@ -55,6 +106,7 @@ const WindowWrapper = (Component, windowKey) => {
             scaleY: 1,
           });
         }
+        clampWindowToViewport(el, lastPosRef);
 
         const currentX = gsap.getProperty(el, "x") || 0;
         const currentY = gsap.getProperty(el, "y") || 0;
@@ -106,10 +158,7 @@ const WindowWrapper = (Component, windowKey) => {
             onComplete: () => {
               el.style.display = "none";
               el.style.willChange = "auto";
-              if (restoreRef.current) {
-                gsap.set(el, { clearProps: "width,height,top,left,borderRadius" });
-                restoreRef.current = null;
-              }
+              restoreWindowInlineSize(el, restoreRef);
             },
           });
           gsap.to(el, { opacity: 0, duration: 0.14, delay: 0.22, ease: "power1.in" });
@@ -117,7 +166,11 @@ const WindowWrapper = (Component, windowKey) => {
           gsap.to(el, {
             scale: 0.88, y: currentY + 24, opacity: 0,
             duration: 0.2, ease: "power3.in",
-            onComplete: () => { el.style.display = "none"; },
+            onComplete: () => {
+              el.style.display = "none";
+              el.style.willChange = "auto";
+              restoreWindowInlineSize(el, restoreRef);
+            },
           });
         }
       }
@@ -140,14 +193,22 @@ const WindowWrapper = (Component, windowKey) => {
             x: currentX, y: currentY,
             width: rect.width, height: rect.height,
             visualX: rect.x, visualY: rect.y,
+            inlineW: el.style.width,
+            inlineH: el.style.height,
           };
         }
 
+        const navBottom = getNavBottom();
         gsap.to(el, {
           x: 0, y: 0,
-          width: "100vw", height: "100vh",
-          top: 0, left: 0, borderRadius: 0,
+          width: "100vw", height: Math.max(MIN_H, window.innerHeight - navBottom),
+          top: navBottom, left: 0, borderRadius: 0,
           duration: 0.3, ease: "power2.inOut",
+          onComplete: () => {
+            if (el.dataset.maximized === "true") {
+              el.style.height = `calc(100vh - ${navBottom}px)`;
+            }
+          },
         });
       } else {
         if (draggableRef.current) draggableRef.current.enable();
@@ -157,19 +218,19 @@ const WindowWrapper = (Component, windowKey) => {
 
           gsap.to(el, {
             x: visualX, y: visualY, width, height,
-            borderRadius: "10px",
+            borderRadius: "20px",
             duration: 0.3, ease: "power2.inOut",
             onComplete: () => {
-              gsap.set(el, { clearProps: "width,height,top,left,borderRadius" });
+              restoreWindowInlineSize(el, restoreRef);
               gsap.set(el, { x, y });
-              restoreRef.current = null;
+              clampWindowToViewport(el, lastPosRef);
             },
           });
         }
       }
     }, [isMaximized]);
 
-    // ── GSAP Draggable — only drag via window header ─────────────────────────
+    // ── GSAP Draggable — bounded below Menubar so header stays reachable ────
     useGSAP(() => {
       const el = ref.current;
       if (!el) return;
@@ -184,12 +245,13 @@ const WindowWrapper = (Component, windowKey) => {
       const [instance] = Draggable.create(el, {
         trigger: dragHandle,
         onPress(e) {
-          // Block drags that start on a resize handle
-          if (e.target?.closest?.(".ww-resize")) {
+          // Block drags that start on a resize handle or interactive control
+          if (e.target?.closest?.(".ww-resize, button, a, input, [data-no-drag]")) {
             this.endDrag(e);
             return;
           }
           focusWindow(windowKey);
+          this.applyBounds(computeWindowDragBounds(el), true);
         },
         onDrag() {
           lastPosRef.current = {
@@ -199,8 +261,23 @@ const WindowWrapper = (Component, windowKey) => {
         },
       });
 
+      const handleViewportResize = () => {
+        if (!useWindowStore.getState().windows[windowKey]?.isMaximized) {
+          clampWindowToViewport(el, lastPosRef);
+        }
+      };
+
+      const winState = useWindowStore.getState().windows[windowKey];
+      if (winState?.isOpen && !winState?.isMaximized) {
+        clampWindowToViewport(el, lastPosRef);
+      }
+
+      window.addEventListener("resize", handleViewportResize);
       draggableRef.current = instance;
-      return () => instance.kill();
+      return () => {
+        window.removeEventListener("resize", handleViewportResize);
+        instance.kill();
+      };
     }, []);
 
     // ── Resize logic ─────────────────────────────────────────────────────────
@@ -332,6 +409,9 @@ const WindowWrapper = (Component, windowKey) => {
       <section
         id={windowKey}
         ref={ref}
+        data-active={isActive ? "true" : "false"}
+        data-maximized={isMaximized ? "true" : "false"}
+        onPointerDownCapture={() => focusWindow(windowKey)}
         style={{ zIndex: isOpen ? zIndex : zIndexRef.current }}
         className="ww-window absolute flex flex-col"
       >

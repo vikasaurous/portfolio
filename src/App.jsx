@@ -1,35 +1,44 @@
 import { Draggable } from "gsap/Draggable";
 import gsap from "gsap";
 
-import { useEffect, Suspense, lazy } from "react";
+import { useEffect, useState, Suspense } from "react";
 import  GeetaVerse  from "./components/GeetaVerse";
 
 import CustomizeHint from "./components/CustomizeHint";
 import useThemeStore from "#store/theme";
+import useWindowStore from "#store/window";
 import { Dock, Home, Navbar, Welcome, LiquidGlassReveal, ChangeBackground } from "#components";
-import {
-  Contact,
-  Finder,
-  Image,
-  Terminal,
-  Text,
-  Trash,
-} from "#windows";
+import Trash from "#windows/Trash.jsx";
+import { LazyWindows, windowLoaders } from "#windows/loaders.js";
 import useWallpaperStore, { WALLPAPERS } from "#store/wallpaper";
 
-// Lazy-loaded: react-pdf + pdf.worker.min.mjs (~1.2 MB) are deferred
-// until the user actually opens the Resume window.
-const Resume = lazy(() => import("./windows/Resume.jsx"));
+const WINDOW_KEYS = Object.keys(windowLoaders);
 
-// Lazy-loaded: Safari UI is deferred until the user opens the Safari window.
-const Safari = lazy(() => import("./windows/Safari/index.jsx"));
+const LazyWindow = ({ windowKey }) => {
+  const isOpen = useWindowStore((s) => Boolean(s.windows[windowKey]?.isOpen));
+  const [hasOpened, setHasOpened] = useState(isOpen);
+
+  if (isOpen && !hasOpened) {
+    setHasOpened(true);
+  }
+
+  if (!hasOpened) return null;
+
+  const Component = LazyWindows[windowKey];
+  return (
+    <Suspense fallback={null}>
+      <Component />
+    </Suspense>
+  );
+};
 
 gsap.registerPlugin(Draggable);
 
 const App = () => {
 
-   const { theme, setTheme } = useThemeStore();
-  const { activeWallpaperId, customWallpaperUrl } = useWallpaperStore();
+  const theme = useThemeStore((s) => s.theme);
+  const activeWallpaperId = useWallpaperStore((s) => s.activeWallpaperId);
+  const customWallpaperUrl = useWallpaperStore((s) => s.customWallpaperUrl);
 
   // Apply wallpaper to body — preset takes precedence, then custom upload.
   // When neither is set, clear inline styles so index.css defaults take over.
@@ -101,16 +110,13 @@ const App = () => {
 
 
   useEffect(() => {
-    const handleContextMenu = (e) => e.preventDefault();
-    const handleDragStart = (e) => e.preventDefault();
-
-    document.addEventListener('contextmenu', handleContextMenu);
-    document.addEventListener('dragstart', handleDragStart);
-    
-    return () => {
-      document.removeEventListener('contextmenu', handleContextMenu);
-      document.removeEventListener('dragstart', handleDragStart);
+    // Only suppress native ghost-image dragging so GSAP Draggable handles icons cleanly
+    const handleDragStart = (e) => {
+      if (e.target?.tagName === "IMG") e.preventDefault();
     };
+
+    document.addEventListener("dragstart", handleDragStart);
+    return () => document.removeEventListener("dragstart", handleDragStart);
   }, []);
 
   return (
@@ -138,18 +144,10 @@ const App = () => {
         {/* Main Content */}
         <Home />
 
-        {/* Apps/Windows */}
-        <Terminal />
-        <Suspense fallback={null}>
-          <Resume />
-        </Suspense>
-        <Suspense fallback={null}>
-          <Safari />
-        </Suspense>
-        <Finder />
-        <Text />
-        <Image />
-        <Contact />
+        {/* Apps/Windows — lazy-loaded on first open, kept mounted afterward */}
+        {WINDOW_KEYS.map((key) => (
+          <LazyWindow key={key} windowKey={key} />
+        ))}
         <Trash />
 
         {/* Fixed UI */}

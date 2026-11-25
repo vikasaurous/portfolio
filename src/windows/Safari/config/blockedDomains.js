@@ -9,7 +9,7 @@
 // The matcher normalises www. prefixes automatically.
 // ──────────────────────────────────────────────────────────────────────────────
 
-export const BLOCKED_DOMAINS = new Set([
+const BLOCKED_DOMAINS = new Set([
   // Social & professional networks
   'github.com',
   'linkedin.com',

@@ -67,71 +67,44 @@ const dockApps = [
   {
     id: "trash",
     name: "Archive", // was "Trash"
-    icon: "trash.png",
+    icon: "trash.webp",
     canOpen: true,
   },
 ];
 
 
-const techStack = [
-  {
-    category: "Frontend",
-    items: ["React.js", "Next.js", "TypeScript"],
-  },
-  {
-    category: "Mobile",
-    items: ["React Native", "Expo"],
-  },
-  {
-    category: "Styling",
-    items: ["Tailwind CSS", "Sass", "CSS"],
-  },
-  {
-    category: "Backend",
-    items: ["Node.js", "Express", "NestJS", "Hono"],
-  },
-  {
-    category: "Database",
-    items: ["MongoDB", "PostgreSQL"],
-  },
-  {
-    category: "Dev Tools",
-    items: ["Git", "GitHub", "Docker"],
-  },
-];
-
 const socials = [
   {
     id: 1,
-    text: "Github",
+    text: "GitHub",
     icon: "icons/github.svg",
-    bg: "#121415ff",
+    bg: "linear-gradient(135deg, #2d333b 0%, #161b22 100%)",
     link: "https://github.com/vikasaurous",
   },
   {
     id: 2,
     text: "LinkedIn",
     icon: "icons/linkedin.svg",
-    bg: "#05b6f6",
+    bg: "linear-gradient(135deg, #1b86e8 0%, #0a66c2 100%)",
     link: "https://www.linkedin.com/in/connectvikasyadav/",
   },
   {
     id: 3,
     text: "X",
     icon: "icons/twitter.svg",
-    bg: "#000000d7 ",
+    bg: "linear-gradient(135deg, #27272a 0%, #09090b 100%)",
     link: "https://x.com/vikasaurous",
   },
   {
     id: 4,
     text: "Instagram",
     icon: "icons/instagram-logo.svg",
-    bg: "#ea5772ff ",
+    bg: "linear-gradient(135deg, #f56040 0%, #e1306c 100%)",
     link: "https://instagram.com/vikasaurous",
   },
 ];
 
-export { navLinks, navIcons, dockApps, techStack, socials };
+export { navLinks, navIcons, dockApps, socials };
 
 const WORK_LOCATION = {
   id: 1,
@@ -254,7 +227,7 @@ const ABOUT_LOCATION = {
       fileType: "txt",
       position: "top-60 left-5 ",
       subtitle: "Meet the Developer Behind the Code",
-      image: "images/vikas-cover.png",
+      image: "images/vikas-cover.webp",
       description: [
         "Hey, I’m Vikas 👋 — a CS student who writes code, fixes bugs, and occasionally wonders how it all compiled.",
         "I mostly work with JavaScript, React, and Next.js, trying to build things that don’t break immediately.",

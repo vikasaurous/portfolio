@@ -2,29 +2,27 @@ import useWindowStore from "#store/window";
 import { useState } from "react";
 
 const WindowControl = ({ target }) => {
-  const { closeWindow, minimizeWindow, maximizeWindow } = useWindowStore();
+  const closeWindow = useWindowStore((s) => s.closeWindow);
+  const minimizeWindow = useWindowStore((s) => s.minimizeWindow);
+  const maximizeWindow = useWindowStore((s) => s.maximizeWindow);
   const [hovered, setHovered] = useState(false);
 
   const base =
-    "w-3 h-3 rounded-full flex items-center justify-center cursor-pointer select-none flex-shrink-0 transition-all duration-100";
+    "ww-tl-dot w-3 h-3 rounded-full border-0 p-0 flex items-center justify-center cursor-pointer select-none flex-shrink-0 transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500";
 
   return (
     <div
-      className="flex gap-[7px] items-center pl-1"
+      className="ww-traffic-lights flex gap-[7px] items-center pl-1"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       {/* CLOSE — red */}
-      <div
+      <button
+        type="button"
         onClick={() => closeWindow(target)}
         title="Close"
-        className={`${base}`}
-        style={{
-          background: hovered
-            ? "radial-gradient(circle at 50% 35%, #ff8080 0%, #ff5f57 40%, #e0443e 100%)"
-            : "radial-gradient(circle at 50% 35%, #ff8f8b 0%, #ff6058 40%, #e74b41 100%)",
-          boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.4), inset 0 -0.5px 0 rgba(0,0,0,0.25), 0 0 0 0.5px rgba(0,0,0,0.18)",
-        }}
+        aria-label={`Close ${target} window`}
+        className={`${base} ww-tl-close`}
       >
         {hovered && (
           <svg viewBox="0 0 10 10" width="6" height="6" aria-hidden="true">
@@ -32,38 +30,30 @@ const WindowControl = ({ target }) => {
             <line x1="7.5" y1="2.5" x2="2.5" y2="7.5" stroke="rgba(100,0,0,0.65)" strokeWidth="1.4" strokeLinecap="round" />
           </svg>
         )}
-      </div>
+      </button>
 
       {/* MINIMIZE — yellow */}
-      <div
+      <button
+        type="button"
         onClick={() => minimizeWindow(target)}
         title="Minimize"
-        className={`${base}`}
-        style={{
-          background: hovered
-            ? "radial-gradient(circle at 50% 35%, #ffd060 0%, #ffbd2e 40%, #d9a010 100%)"
-            : "radial-gradient(circle at 50% 35%, #ffd870 0%, #ffc130 40%, #e0a918 100%)",
-          boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.4), inset 0 -0.5px 0 rgba(0,0,0,0.2), 0 0 0 0.5px rgba(0,0,0,0.18)",
-        }}
+        aria-label={`Minimize ${target} window`}
+        className={`${base} ww-tl-min`}
       >
         {hovered && (
           <svg viewBox="0 0 10 10" width="6" height="6" aria-hidden="true">
             <line x1="2.5" y1="5" x2="7.5" y2="5" stroke="rgba(80,50,0,0.65)" strokeWidth="1.4" strokeLinecap="round" />
           </svg>
         )}
-      </div>
+      </button>
 
       {/* MAXIMIZE — green */}
-      <div
+      <button
+        type="button"
         onClick={() => maximizeWindow(target)}
         title="Maximize"
-        className={`${base}`}
-        style={{
-          background: hovered
-            ? "radial-gradient(circle at 50% 35%, #58d858 0%, #28c840 40%, #18a830 100%)"
-            : "radial-gradient(circle at 50% 35%, #68e068 0%, #34d050 40%, #1eb840 100%)",
-          boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.4), inset 0 -0.5px 0 rgba(0,0,0,0.2), 0 0 0 0.5px rgba(0,0,0,0.18)",
-        }}
+        aria-label={`Maximize ${target} window`}
+        className={`${base} ww-tl-max`}
       >
         {hovered && (
           <svg viewBox="0 0 10 10" width="6" height="6" aria-hidden="true">
@@ -72,7 +62,7 @@ const WindowControl = ({ target }) => {
             <line x1="7.5" y1="2.5" x2="2.5" y2="7.5" stroke="rgba(0,60,10,0.65)" strokeWidth="1.1" strokeLinecap="round" />
           </svg>
         )}
-      </div>
+      </button>
     </div>
   );
 };

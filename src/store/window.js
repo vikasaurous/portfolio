@@ -54,4 +54,17 @@ const useWindowStore = create(
   })),
 );
 
+export const selectIsActiveWindow = (state, windowKey) => {
+  const target = state.windows[windowKey];
+  if (!target?.isOpen) return false;
+
+  let maxZ = -Infinity;
+  for (const win of Object.values(state.windows)) {
+    if (win.isOpen && win.zIndex > maxZ) {
+      maxZ = win.zIndex;
+    }
+  }
+  return target.zIndex === maxZ;
+};
+
 export default useWindowStore;

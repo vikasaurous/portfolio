@@ -66,28 +66,28 @@ const greeting = () => {
 const FavoriteItem = ({ fav, onUrl, onWindow }) => (
   <button
     onClick={() => fav.action === 'url' ? onUrl(fav.value) : onWindow(fav.value)}
-    className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors group cursor-pointer"
+    className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/40 dark:hover:bg-white/[0.08] transition-colors group cursor-pointer"
     aria-label={`Open ${fav.name}`}
   >
-    <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-white dark:bg-[#2c2c2e] shadow-sm group-hover:shadow transition-shadow">
+    <div className="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center lg-card group-hover:scale-105 transition-transform">
       <img
         src={fav.icon}
         alt={fav.name}
-        className="w-8 h-8 object-contain dark:invert"
+        className="w-7 h-7 object-contain dark:invert"
         draggable={false}
       />
     </div>
-    <span className="text-[11px] text-gray-600 dark:text-gray-400 font-medium text-center leading-tight max-w-[64px] truncate">
+    <span className="text-[11px] text-gray-700 dark:text-gray-300 font-medium text-center leading-tight max-w-[64px] truncate">
       {fav.name}
     </span>
   </button>
 );
 
 const ProjectCard = ({ project, onUrl }) => (
-  <div className="flex gap-4 p-4 bg-white dark:bg-[#2c2c2e] rounded-xl shadow-sm hover:shadow-md transition-all duration-200 group">
+  <div className="flex gap-4 p-4 lg-card hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 group">
     {/* Preview */}
     {project.imageUrl && (
-      <div className="w-[72px] h-[50px] rounded-lg overflow-hidden shrink-0 bg-gray-100 dark:bg-[#3a3a3c]">
+      <div className="w-[72px] h-[50px] rounded-xl overflow-hidden shrink-0 bg-black/5 dark:bg-white/10">
         <img
           src={project.imageUrl}
           alt={project.name}
@@ -103,7 +103,7 @@ const ProjectCard = ({ project, onUrl }) => (
         {project.name}
       </h3>
       {project.desc && (
-        <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-2">
+        <p className="text-[11px] text-gray-600 dark:text-gray-300/80 leading-relaxed line-clamp-2">
           {project.desc}
         </p>
       )}
@@ -114,7 +114,7 @@ const ProjectCard = ({ project, onUrl }) => (
       {project.liveUrl && (
         <button
           onClick={() => onUrl(project.liveUrl)}
-          className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-[11px] font-medium rounded-lg transition-colors cursor-pointer"
+          className="flex items-center gap-1 px-3 py-1.5 bg-[#0a84ff] hover:bg-[#0071e3] text-white text-[11px] font-medium rounded-full transition-colors cursor-pointer shadow-sm"
           aria-label={`Open ${project.name} live demo`}
         >
           <ExternalLink className="w-3 h-3" />
@@ -124,7 +124,7 @@ const ProjectCard = ({ project, onUrl }) => (
       {project.githubUrl && (
         <button
           onClick={() => onUrl(project.githubUrl)}
-          className="flex items-center gap-1 px-2.5 py-1.5 bg-gray-100 dark:bg-[#3a3a3c] hover:bg-gray-200 dark:hover:bg-[#48484a] text-gray-700 dark:text-gray-300 text-[11px] font-medium rounded-lg transition-colors cursor-pointer"
+          className="lg-pill px-3 py-1.5 text-[11px] font-medium cursor-pointer"
           aria-label={`Open ${project.name} on GitHub`}
         >
           <Github className="w-3 h-3" />
@@ -139,11 +139,11 @@ const ProjectCard = ({ project, onUrl }) => (
 
 const StartPage = () => {
   const openUrl = useSafariStore((s) => s.openUrl);
-  const { openWindow } = useWindowStore();
+  const openWindow = useWindowStore((s) => s.openWindow);
   const projects = deriveProjects();
 
   return (
-    <div className="h-full overflow-y-auto overscroll-contain bg-[#f2f2f7] dark:bg-[#1c1c1e]">
+    <div className="h-full overflow-y-auto overscroll-contain bg-transparent">
       <div className="max-w-[640px] mx-auto px-8 py-10 pb-16">
 
         {/* Greeting */}
@@ -151,14 +151,14 @@ const StartPage = () => {
           <h1 className="text-[26px] font-bold text-gray-900 dark:text-gray-100 mb-1 leading-tight">
             {greeting()} 👋
           </h1>
-          <p className="text-[13px] text-gray-500 dark:text-gray-400">
+          <p className="text-[13px] text-gray-600 dark:text-gray-400">
             Choose where you'd like to explore.
           </p>
         </div>
 
         {/* Favorites */}
         <section className="mb-8">
-          <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3 px-1">
+          <p className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 px-1">
             ⭐ Favorites
           </p>
           <div className="grid grid-cols-5 gap-1">
@@ -174,7 +174,7 @@ const StartPage = () => {
         </section>
 
         {/* Divider */}
-        <div className="border-t border-gray-200 dark:border-gray-700 mb-8" />
+        <div className="border-t border-black/10 dark:border-white/10 mb-8" />
 
         {/* Featured Projects */}
         {projects.length > 0 && (

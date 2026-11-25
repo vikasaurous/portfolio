@@ -5,7 +5,7 @@ import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig({
   plugins: [react(), tailwindcss()],
   base: "/portfolio/",
   resolve: {
@@ -28,14 +28,6 @@ export default defineConfig(({ mode }) => ({
         dirname(fileURLToPath(import.meta.url)),
         "src/windows",
       ),
-      // @ alias — mirrors shadcn convention, used by ui components
-      "@": resolve(dirname(fileURLToPath(import.meta.url)), "src"),
     },
   },
-  server:
-    mode === "development"
-      ? {
-          allowedHosts: ["unopposable-anita-judgmental.ngrok-free.dev"],
-        }
-      : {},
-}));
+});
