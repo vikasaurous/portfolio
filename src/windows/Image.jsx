@@ -3,10 +3,26 @@ import WindowWrapper from "#hoc/WindowWrapper";
 import useWindowStore from "#store/window";
 import React from "react";
 
-const ImageWindowContent = () => {
+export const ImageBody = () => {
   const data = useWindowStore((s) => s.windows.imgfile?.data);
+  if (!data) return null;
 
-  const { name, imageUrl } = data ?? {};
+  const { name, imageUrl } = data;
+  return (
+    <div className="preview">
+      {imageUrl ? (
+        <img
+          src={imageUrl}
+          alt={name ?? ""}
+        />
+      ) : null}
+    </div>
+  );
+};
+
+const ImageWindowContent = () => {
+  const name = useWindowStore((s) => s.windows.imgfile?.data?.name);
+
   return (
     <>
       <div id="window-header">
@@ -14,16 +30,7 @@ const ImageWindowContent = () => {
         <h2>{name ?? ""}</h2>
       </div>
 
-      {data ? (
-        <div className="preview">
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={name ?? ""}
-            />
-          ) : null}
-        </div>
-      ) : null}
+      <ImageBody />
     </>
   );
 };

@@ -23,7 +23,7 @@ const NavButton = ({ icon, onClick, disabled, title }) => {
 
 // ─── Toolbar — forwarded ref exposes focusAddress() ───────────────────────────
 
-const Toolbar = forwardRef((_, ref) => {
+const Toolbar = forwardRef(({ hideWindowControls = false }, ref) => {
   const tab        = useSafariStore(getActiveTab);
   const canBack    = useSafariStore(selectCanGoBack);
   const canForward = useSafariStore(selectCanGoForward);
@@ -81,11 +81,11 @@ const Toolbar = forwardRef((_, ref) => {
   return (
     <div className="safari-toolbar" data-drag-handle>
 
-      {/* ── Traffic lights ── */}
-      <WindowControl target="safari" />
+      {/* ── Traffic lights (desktop only) ── */}
+      {!hideWindowControls && <WindowControl target="safari" />}
 
       {/* ── Back / Forward / Home ── */}
-      <div className="flex items-center gap-0.5 ml-1">
+      <div className={`flex items-center gap-0.5 ${hideWindowControls ? '' : 'ml-1'}`}>
         <NavButton icon={ChevronLeft}  onClick={goBack}    disabled={!canBack}    title="Go Back (Alt+←)"    />
         <NavButton icon={ChevronRight} onClick={goForward} disabled={!canForward} title="Go Forward (Alt+→)"  />
         <NavButton icon={Home}         onClick={goHome}    disabled={!tab?.url}   title="Home"               />

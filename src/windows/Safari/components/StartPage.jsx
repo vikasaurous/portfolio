@@ -84,10 +84,10 @@ const FavoriteItem = ({ fav, onUrl, onWindow }) => (
 );
 
 const ProjectCard = ({ project, onUrl }) => (
-  <div className="flex gap-4 p-4 lg-card hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 group">
+  <div className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 p-4 lg-card hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 group">
     {/* Preview */}
     {project.imageUrl && (
-      <div className="w-[72px] h-[50px] rounded-xl overflow-hidden shrink-0 bg-black/5 dark:bg-white/10">
+      <div className="w-full sm:w-[72px] h-36 sm:h-[50px] rounded-xl overflow-hidden shrink-0 bg-black/5 dark:bg-white/10">
         <img
           src={project.imageUrl}
           alt={project.name}
@@ -110,7 +110,7 @@ const ProjectCard = ({ project, onUrl }) => (
     </div>
 
     {/* Actions */}
-    <div className="flex items-center gap-1.5 shrink-0 self-center">
+    <div className="flex items-center gap-1.5 shrink-0 sm:self-center">
       {project.liveUrl && (
         <button
           onClick={() => onUrl(project.liveUrl)}
@@ -144,11 +144,11 @@ const StartPage = () => {
 
   return (
     <div className="h-full overflow-y-auto overscroll-contain bg-transparent">
-      <div className="max-w-[640px] mx-auto px-8 py-10 pb-16">
+      <div className="max-w-[640px] mx-auto px-4 sm:px-8 py-6 sm:py-10 pb-16">
 
         {/* Greeting */}
         <div className="mb-8">
-          <h1 className="text-[26px] font-bold text-gray-900 dark:text-gray-100 mb-1 leading-tight">
+          <h1 className="text-[24px] sm:text-[26px] font-bold text-gray-900 dark:text-gray-100 mb-1 leading-tight">
             {greeting()} 👋
           </h1>
           <p className="text-[13px] text-gray-600 dark:text-gray-400">
@@ -161,7 +161,7 @@ const StartPage = () => {
           <p className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 px-1">
             ⭐ Favorites
           </p>
-          <div className="grid grid-cols-5 gap-1">
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-1">
             {FAVORITES.map((fav) => (
               <FavoriteItem
                 key={fav.id}

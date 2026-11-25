@@ -1,16 +1,19 @@
 import { Draggable } from "gsap/Draggable";
 import gsap from "gsap";
 
-import { useEffect, useState, Suspense } from "react";
+import { lazy, useEffect, useState, Suspense } from "react";
 import  GeetaVerse  from "./components/GeetaVerse";
 
 import CustomizeHint from "./components/CustomizeHint";
+import { useIsMobile } from "./hooks/useIsMobile";
 import useThemeStore from "#store/theme";
 import useWindowStore from "#store/window";
 import { Dock, Home, Navbar, Welcome, LiquidGlassReveal, ChangeBackground, DesktopWidgets } from "#components";
 import Trash from "#windows/Trash.jsx";
 import { LazyWindows, windowLoaders } from "#windows/loaders.js";
 import useWallpaperStore, { WALLPAPERS } from "#store/wallpaper";
+
+const MobileOS = lazy(() => import("./components/MobileOS"));
 
 const WINDOW_KEYS = Object.keys(windowLoaders);
 
@@ -35,7 +38,7 @@ const LazyWindow = ({ windowKey }) => {
 gsap.registerPlugin(Draggable);
 
 const App = () => {
-
+  const isMobile = useIsMobile();
   const theme = useThemeStore((s) => s.theme);
   const activeWallpaperId = useWallpaperStore((s) => s.activeWallpaperId);
   const customWallpaperUrl = useWallpaperStore((s) => s.customWallpaperUrl);
@@ -135,30 +138,38 @@ const App = () => {
 
       <main className="select-none" style={{ position: "relative", zIndex: 1 }}>
       <LiquidGlassReveal>
-        {/* Navigation */}
-        <Navbar />
+        {isMobile ? (
+          <Suspense fallback={null}>
+            <MobileOS />
+          </Suspense>
+        ) : (
+          <>
+            {/* Navigation */}
+            <Navbar />
 
-        {/* Hero */}
-        <Welcome />
+            {/* Hero */}
+            <Welcome />
 
-        {/* Main Content */}
-        <Home />
-        <DesktopWidgets />
+            {/* Main Content */}
+            <Home />
+            <DesktopWidgets />
 
-        {/* Apps/Windows — lazy-loaded on first open, kept mounted afterward */}
-        {WINDOW_KEYS.map((key) => (
-          <LazyWindow key={key} windowKey={key} />
-        ))}
-        <Trash />
+            {/* Apps/Windows — lazy-loaded on first open, kept mounted afterward */}
+            {WINDOW_KEYS.map((key) => (
+              <LazyWindow key={key} windowKey={key} />
+            ))}
+            <Trash />
 
-        {/* Fixed UI */}
-        <Dock />
-        <GeetaVerse />
+            {/* Fixed UI */}
+            <Dock />
+            <GeetaVerse />
 
-        {/* One-time hint pointing at the wallpaper picker in Control Center */}
-        <CustomizeHint />
+            {/* One-time hint pointing at the wallpaper picker in Control Center */}
+            <CustomizeHint />
+          </>
+        )}
 
-        {/* Wallpaper picker sheet — lives outside the scroll tree, always on top */}
+        {/* Wallpaper picker sheet — shared by macOS and iOS Control Center */}
         <ChangeBackground />
       </LiquidGlassReveal>
       </main>
