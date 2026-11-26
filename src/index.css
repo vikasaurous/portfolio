@@ -291,7 +291,7 @@ html.dark,
 
   .lg-popover {
     position: relative;
-    background: var(--lg-shell-bg);
+    background: rgba(250, 252, 255, 0.84);
     backdrop-filter: var(--lg-blur-popover);
     -webkit-backdrop-filter: var(--lg-blur-popover);
     border-radius: 20px;
@@ -313,6 +313,15 @@ html.dark,
       mask-composite: exclude;
       pointer-events: none;
     }
+  }
+
+  html.dark .lg-popover,
+  .dark .lg-popover {
+    background: rgba(20, 22, 31, 0.88);
+    box-shadow:
+      0 0 0 0.5px rgba(255, 255, 255, 0.1),
+      0 14px 38px rgba(0, 0, 0, 0.48),
+      0 30px 68px rgba(0, 0, 0, 0.44);
   }
 
   .lg-card {
@@ -358,8 +367,9 @@ html.dark,
 
     h1 {
       text-shadow: none;
+      pointer-events: none;
       padding: 36px 48px;
-      margin: calc(0.625rem - 36px) -48px -36px;
+      margin: calc(1.125rem - 36px) -48px -36px;
       background-image: var(--lg-hero-glass-gradient);
       -webkit-background-clip: text;
       background-clip: text;
@@ -368,6 +378,10 @@ html.dark,
       filter:
         drop-shadow(0 2px 10px rgba(0, 0, 0, 0.2))
         drop-shadow(0 12px 28px rgba(0, 0, 0, 0.24));
+
+      span {
+        pointer-events: auto;
+      }
     }
 
     .small-screen {
