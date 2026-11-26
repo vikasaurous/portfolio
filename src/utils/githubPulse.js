@@ -1,10 +1,19 @@
 const GITHUB_USER = "vikasaurous";
 const CONTRIBUTIONS_URL = `https://github-contributions-api.jogruber.de/v4/${GITHUB_USER}?y=last`;
-const REPOS_URL = `https://api.github.com/users/${GITHUB_USER}/repos?sort=pushed&per_page=1`;
-const CACHE_KEY = "macos_portfolio_github_matrix_v2";
+const REPOS_URL = `https://api.github.com/users/${GITHUB_USER}/repos?sort=pushed&per_page=4`;
+const CACHE_KEY = "macos_portfolio_github_matrix_v3";
 const CACHE_TTL_MS = 15 * 60 * 1000;
 const REQUEST_TIMEOUT_MS = 6000;
 const WEEKS_TO_SHOW = 12;
+
+const LANGUAGE_COLORS = {
+  JavaScript: "#f1e05a",
+  TypeScript: "#3178c6",
+  CSS: "#663399",
+  HTML: "#e34c26",
+  Python: "#3572A5",
+  Shell: "#89e051",
+};
 
 let inflightRequest = null;
 
@@ -78,6 +87,8 @@ export function buildContributionWeeks(contributions) {
 
 function buildFallbackData() {
   const { weeks, total12Weeks, activeDays } = buildContributionWeeks(buildFallbackDays());
+  const repoUrl = `https://github.com/${GITHUB_USER}/portfolio`;
+
   return {
     username: GITHUB_USER,
     profileUrl: `https://github.com/${GITHUB_USER}`,
@@ -86,7 +97,15 @@ function buildFallbackData() {
     activeDays,
     latestRepo: {
       name: "portfolio",
-      url: `https://github.com/${GITHUB_USER}/portfolio`,
+      url: repoUrl,
+      language: "JavaScript",
+      pushedAt: null,
+    },
+    latestCommit: {
+      message: "feat(mobile): add iOS 26 Liquid Glass Home Screen and mobile app sheets",
+      sha: null,
+      url: repoUrl,
+      date: null,
     },
     source: "offline",
   };
@@ -99,7 +118,9 @@ function readCache() {
     const raw = localStorage.getItem(CACHE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    if (!parsed?.data?.weeks || typeof parsed.timestamp !== "number") return null;
+    if (!Array.isArray(parsed?.data?.weeks) || typeof parsed.timestamp !== "number") {
+      return null;
+    }
     return parsed;
   } catch {
     return null;
@@ -127,8 +148,13 @@ async function fetchJsonWithTimeout(url) {
   }
 }
 
+function normalizeCommitHeadline(message) {
+  if (typeof message !== "string") return "";
+  return message.split("\n")[0].trim();
+}
+
 /**
- * Fetch 12-week GitHub contribution matrix + latest active repository.
+ * Fetch 12-week GitHub contribution matrix + latest active repository + latest commit.
  * Deduplicates concurrent calls (React StrictMode safe), caches 15 min,
  * and falls back gracefully to stale cache or offline baseline.
  */
@@ -154,7 +180,20 @@ export async function fetchGitHubPulse({ force = false } = {}) {
       const { weeks, total12Weeks, activeDays } = buildContributionWeeks(
         contribPayload.contributions,
       );
-      const topRepo = Array.isArray(repos) && repos.length > 0 ? repos[0] : null;
+
+      const repoList = Array.isArray(repos) ? repos : [];
+      const topRepo = repoList.find((r) => !r.fork) ?? repoList[0] ?? null;
+
+      let latestCommitEntry = null;
+      if (topRepo?.name) {
+        const commitsUrl = `https://api.github.com/repos/${GITHUB_USER}/${topRepo.name}/commits?per_page=1`;
+        const commits = await fetchJsonWithTimeout(commitsUrl).catch(() => null);
+        if (Array.isArray(commits) && commits.length > 0) {
+          latestCommitEntry = commits[0];
+        }
+      }
+
+      const commitHeadline = normalizeCommitHeadline(latestCommitEntry?.commit?.message);
 
       const freshData = {
         username: GITHUB_USER,
@@ -163,8 +202,19 @@ export async function fetchGitHubPulse({ force = false } = {}) {
         total12Weeks,
         activeDays,
         latestRepo: topRepo
-          ? { name: topRepo.name, url: topRepo.html_url }
+          ? {
+              name: topRepo.name,
+              url: topRepo.html_url,
+              language: topRepo.language || null,
+              pushedAt: topRepo.pushed_at || null,
+            }
           : FALLBACK_GITHUB_MATRIX.latestRepo,
+        latestCommit: {
+          message: commitHeadline || (topRepo?.description ?? FALLBACK_GITHUB_MATRIX.latestCommit.message),
+          sha: latestCommitEntry?.sha ? latestCommitEntry.sha.slice(0, 7) : null,
+          url: latestCommitEntry?.html_url || topRepo?.html_url || FALLBACK_GITHUB_MATRIX.latestRepo.url,
+          date: latestCommitEntry?.commit?.author?.date || topRepo?.pushed_at || null,
+        },
         source: "live",
       };
 
@@ -196,6 +246,27 @@ export function formatContributionDay(day) {
   const count = Number(day.count) || 0;
   const noun = count === 1 ? "commit" : "commits";
   return `${count} ${noun} · ${label}`;
+}
+
+export function formatRelativeTime(isoDate) {
+  if (!isoDate) return "";
+  const timestamp = new Date(isoDate).getTime();
+  if (Number.isNaN(timestamp)) return "";
+
+  const diffSeconds = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
+  if (diffSeconds < 60) return "Just now";
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  if (diffMinutes < 60) return `${diffMinutes}m ago`;
+  const diffHours = Math.floor(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 30) return `${diffDays}d ago`;
+  const diffMonths = Math.floor(diffDays / 30);
+  return `${diffMonths}mo ago`;
+}
+
+export function getLanguageColor(language) {
+  return LANGUAGE_COLORS[language] || "#94a3b8";
 }
 
 export function getMumbaiTimeLabel() {

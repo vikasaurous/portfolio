@@ -16,6 +16,9 @@ import useThemeStore from "#store/theme";
 import useWallpaperStore from "#store/wallpaper";
 import useWidgetStore from "#store/widgets";
 import { prefetchWindow } from "#windows/loaders.js";
+import { useGitHubPulse } from "../../hooks/useGitHubPulse";
+import CurrentlyShippingCard from "../CurrentlyShippingCard";
+import RecruiterCard from "../RecruiterCard";
 import Spotlight from "../Spotlight";
 import MobileGitHubWidget from "./MobileGitHubWidget";
 import MobileWindowSheet from "./MobileWindowSheet";
@@ -45,6 +48,7 @@ const MobileOS = () => {
   const openWallpaperPicker = useWallpaperStore((s) => s.openPicker);
   const showWidgets = useWidgetStore((s) => s.showWidgets);
   const toggleWidgets = useWidgetStore((s) => s.toggleWidgets);
+  const { pulse, syncing, mumbaiTime, refresh } = useGitHubPulse(showWidgets);
 
   const [clock, setClock] = useState(() => dayjs().format("h:mm"));
   const [isSpotlightOpen, setIsSpotlightOpen] = useState(false);
@@ -302,8 +306,24 @@ const MobileOS = () => {
           <h1 className="ios-hero-title">portfolio</h1>
         </section>
 
-        {/* Interactive 12-Week GitHub Commit Matrix */}
-        <MobileGitHubWidget />
+        {/* Stacked GitHub Widgets (Currently Shipping on top of 12w Matrix) */}
+        {showWidgets && (
+          <div className="flex flex-col gap-3 w-full">
+            <section
+              aria-label="Currently Shipping on GitHub"
+              className="ios-widget-card w-full"
+            >
+              <CurrentlyShippingCard pulse={pulse} compact />
+            </section>
+
+            <MobileGitHubWidget
+              pulse={pulse}
+              syncing={syncing}
+              mumbaiTime={mumbaiTime}
+              onRefresh={refresh}
+            />
+          </div>
+        )}
 
         {/* SpringBoard App Grid (4 columns) */}
         <section aria-label="Apps" className="w-full">
@@ -331,6 +351,16 @@ const MobileOS = () => {
             ))}
           </ul>
         </section>
+
+        {/* Slim Recruiter Quick Bar */}
+        {showWidgets && (
+          <section
+            aria-label="Recruiter Quick Actions"
+            className="ios-widget-card w-full !py-2.5 !px-3.5"
+          >
+            <RecruiterCard compact />
+          </section>
+        )}
       </div>
 
       {/* ── Bottom Search Pill + Liquid Glass iOS Dock ── */}
