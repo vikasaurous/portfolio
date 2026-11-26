@@ -140,8 +140,8 @@ html.dark,
   nav {
     @apply flex justify-between items-center py-1.5 px-4 select-none relative z-[9998];
     background: rgba(248, 250, 255, 0.42);
-    backdrop-filter: blur(36px) saturate(190%) brightness(1.04);
     -webkit-backdrop-filter: blur(36px) saturate(190%) brightness(1.04);
+    backdrop-filter: blur(36px) saturate(190%) brightness(1.04);
     border-bottom: 1px solid rgba(255, 255, 255, 0.35);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.52),
@@ -204,8 +204,8 @@ html.dark,
     gap: 6px;
     border-radius: var(--lg-pill-radius);
     background: var(--lg-pill-bg);
-    backdrop-filter: var(--lg-blur-subtle);
     -webkit-backdrop-filter: var(--lg-blur-subtle);
+    backdrop-filter: var(--lg-blur-subtle);
     border: 1px solid rgba(255, 255, 255, 0.42);
     color: var(--lg-text-primary);
     box-shadow:
@@ -292,8 +292,8 @@ html.dark,
   .lg-popover {
     position: relative;
     background: rgba(250, 252, 255, 0.84);
-    backdrop-filter: var(--lg-blur-popover);
     -webkit-backdrop-filter: var(--lg-blur-popover);
+    backdrop-filter: var(--lg-blur-popover);
     border-radius: 20px;
     box-shadow:
       0 0 0 0.5px rgba(0, 0, 0, 0.1),
@@ -326,8 +326,8 @@ html.dark,
 
   .lg-card {
     background: var(--lg-card-bg);
-    backdrop-filter: var(--lg-blur-subtle);
     -webkit-backdrop-filter: var(--lg-blur-subtle);
+    backdrop-filter: var(--lg-blur-subtle);
     border-radius: var(--lg-card-radius);
     border: 1px solid rgba(255, 255, 255, 0.42);
     box-shadow:
@@ -404,8 +404,8 @@ html.dark,
       gap: 7px;
       padding: 10px 14px 8px;
       border-radius: 26px;
-      backdrop-filter: blur(42px) saturate(200%) brightness(1.06);
       -webkit-backdrop-filter: blur(42px) saturate(200%) brightness(1.06);
+      backdrop-filter: blur(42px) saturate(200%) brightness(1.06);
       background: rgba(250, 252, 255, 0.28);
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.65),
@@ -486,8 +486,8 @@ html.dark,
     border-radius: var(--lg-window-radius);
     overflow: hidden;
     background: var(--lg-shell-bg);
-    backdrop-filter: var(--lg-blur);
     -webkit-backdrop-filter: var(--lg-blur);
+    backdrop-filter: var(--lg-blur);
     box-shadow: var(--lg-window-shadow-active);
     isolation: isolate;
     transform: translateZ(0);
@@ -632,8 +632,8 @@ html.dark,
       overflow-y: auto;
       border-radius: var(--lg-sidebar-radius);
       background: var(--lg-sidebar-bg);
-      backdrop-filter: var(--lg-blur-subtle);
       -webkit-backdrop-filter: var(--lg-blur-subtle);
+      backdrop-filter: var(--lg-blur-subtle);
       border: 1px solid rgba(255, 255, 255, 0.45);
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.58),
@@ -1095,8 +1095,8 @@ html.dark,
 
         &:hover {
           background: rgba(255, 255, 255, 0.14);
-          backdrop-filter: blur(12px) saturate(160%);
           -webkit-backdrop-filter: blur(12px) saturate(160%);
+          backdrop-filter: blur(12px) saturate(160%);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
         }
 
@@ -1156,8 +1156,8 @@ html.dark,
     letter-spacing: 0.03em;
     color: rgba(255, 255, 255, 0.95);
     background: rgba(24, 26, 33, 0.72);
-    backdrop-filter: blur(22px) saturate(185%);
     -webkit-backdrop-filter: blur(22px) saturate(185%);
+    backdrop-filter: blur(22px) saturate(185%);
     border: 1px solid rgba(255, 255, 255, 0.22);
     border-radius: var(--lg-pill-radius);
     box-shadow:
@@ -1216,8 +1216,8 @@ html.dark,
     padding: 15px 16px 13px;
     border-radius: 24px;
     background: var(--lg-shell-bg);
-    backdrop-filter: var(--lg-blur);
     -webkit-backdrop-filter: var(--lg-blur);
+    backdrop-filter: var(--lg-blur);
     box-shadow:
       0 0 0 0.5px rgba(0, 0, 0, 0.08),
       0 10px 28px rgba(0, 0, 0, 0.14),
@@ -1461,8 +1461,8 @@ html.dark,
     font-weight: 600;
     color: var(--lg-text-primary);
     background: var(--lg-pill-bg);
-    backdrop-filter: var(--lg-blur-subtle);
     -webkit-backdrop-filter: var(--lg-blur-subtle);
+    backdrop-filter: var(--lg-blur-subtle);
     border: 1px solid rgba(255, 255, 255, 0.36);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.48),
@@ -1536,8 +1536,8 @@ html.dark,
     padding: 14px 15px 12px;
     border-radius: 24px;
     background: var(--lg-shell-bg);
-    backdrop-filter: var(--lg-blur);
     -webkit-backdrop-filter: var(--lg-blur);
+    backdrop-filter: var(--lg-blur);
     box-shadow:
       0 0 0 0.5px rgba(0, 0, 0, 0.08),
       0 10px 28px rgba(0, 0, 0, 0.14),
@@ -1637,8 +1637,8 @@ html.dark,
     font-weight: 500;
     color: rgba(255, 255, 255, 0.94);
     background: rgba(255, 255, 255, 0.22);
-    backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.36);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.45),
@@ -1663,8 +1663,8 @@ html.dark,
     place-items: center;
     padding: 10px 8px;
     border-radius: 30px;
-    backdrop-filter: blur(42px) saturate(200%) brightness(1.06);
     -webkit-backdrop-filter: blur(42px) saturate(200%) brightness(1.06);
+    backdrop-filter: blur(42px) saturate(200%) brightness(1.06);
     background: rgba(250, 252, 255, 0.28);
     border: 1px solid rgba(255, 255, 255, 0.38);
     box-shadow:
@@ -1712,8 +1712,8 @@ html.dark,
     width: 100%;
     height: 100dvh;
     background: var(--lg-shell-bg);
-    backdrop-filter: var(--lg-blur-heavy);
     -webkit-backdrop-filter: var(--lg-blur-heavy);
+    backdrop-filter: var(--lg-blur-heavy);
     padding-top: env(safe-area-inset-top);
     animation: iosSheetIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
@@ -1828,8 +1828,8 @@ html.dark,
  */
 @media (prefers-reduced-motion: reduce) {
   #lgr-pre-overlay {
-    backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
     background-color: rgba(240, 242, 248, 0.92) !important;
   }
 
