@@ -1,199 +1,138 @@
-👦🏽 Vikas' Portfolio
+<div align="center">
+  <img src="public/images/sauropod-logo.svg" alt="Vikas Yadav Sauropod Logo" width="72" height="72" />
 
-An interactive macOS-inspired developer portfolio built to feel like a small desktop operating system rather than a conventional portfolio website.
+  <h1>Interactive Desktop Portfolio</h1>
 
-Live: https://vikasaurous.github.io/portfolio/
+  <p>A windowed, desktop-style web portfolio, engineered with React, Vite, Tailwind CSS, Zustand, and GSAP.</p>
 
-![Portfolio Preview](./screenshots/portfolio-preview.png)
+  <p>
+    <a href="https://vikasaurous.github.io/portfolio/">
+      <img src="https://img.shields.io/badge/Live_Demo-0A84FF?style=for-the-badge&logo=githubpages&logoColor=white" alt="Live Demo" />
+    </a>
+    <img src="https://img.shields.io/badge/React-19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React 19" />
+    <img src="https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 7" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-v4-0F172A?style=for-the-badge&logo=tailwindcss&logoColor=38BDF8" alt="Tailwind CSS v4" />
+    <img src="https://img.shields.io/badge/GSAP-3.13-0AE448?style=for-the-badge&logo=greensock&logoColor=black" alt="GSAP" />
+  </p>
 
-Overview
+  <p>
+    <a href="https://vikasaurous.github.io/portfolio/"><strong>Explore Live Portfolio</strong></a> ·
+    <a href="#highlights"><strong>Features</strong></a> ·
+    <a href="#architecture"><strong>Architecture</strong></a> ·
+    <a href="#running-locally"><strong>Run Locally</strong></a>
+  </p>
+</div>
 
-This portfolio turns the usual portfolio experience into an interactive desktop: applications open inside draggable/resizable windows, the Dock launches apps, Finder exposes project information, and the Terminal provides a command-driven way to explore the site.
+---
 
-The project started from a macOS-inspired visual direction and was then extended and reworked around a custom window system, shared state, interaction logic, and portfolio-specific content.
+## Overview
 
-Highlights
+Instead of a conventional linear scroll page, this repository implements a self-contained browser desktop environment built around a shared window manager, centralized state stores, and lazy-loaded applications. Visitors can drag desktop folders, stack and resize translucent glass windows, query developer info through a working Terminal, search everything via Quick Search, customize themes and wallpapers, or seamlessly use the adaptive mobile layout on touch screens.
 
-🖥️ macOS-style desktop — menu bar, desktop icons, Dock, wallpaper, and application windows.
+---
 
-🪟 Custom window manager — open, close, minimize, maximize, focus, drag, resize, and z-index stacking for multiple windows.
+## Highlights
 
-📁 Finder-style project explorer — projects and portfolio content are represented as files and folders instead of static cards.
+| Area | Capabilities |
+| :--- | :--- |
+| **Window Manager** | Open, close, minimize, maximize, focus z-index stacking, titlebar dragging bounded below the top bar, 8-way edge/corner resizing with a live dimension badge, and viewport clamping. |
+| **Desktop & App Dock** | Variable-weight interactive typography on hover, draggable desktop folders with GSAP `Draggable`, and a proximity-scaled bottom App Dock with open-state indicators and chunk prefetching. |
+| **Built-In Applications** | File Explorer with persistent grid drag-and-drop, In-App Web Browser, interactive Terminal with command parser, PDF Resume Viewer (`react-pdf`), Contact sheet, and Text/Image viewers. |
+| **Live Desktop Widgets** | Draggable right-hand widget rails featuring a Quick Profile Card (one-click email copy & CV download), **Currently Shipping** repository feed, and a live 12-week GitHub commit matrix. |
+| **Quick Search** | Fuzzy search modal indexing apps, documents, social links, and explorer items with recent search history and full keyboard navigation. |
+| **Adaptive Mobile Shell** | Dedicated touch-first mobile workspace (`MobileOS` + slide-up window sheets) with compact profile/GitHub widgets, mobile file explorer, quick-command terminal chips, and Control Center. |
+| **Control Center & Themes** | `Light`, `Dark`, and `System` theme synchronization, desktop widget visibility toggle, preset wallpapers, and session-only local custom background uploads (`JPEG`, `PNG`, `WebP`, `AVIF` up to 10 MB). |
+| **Liquid Glass & Motion** | Frosted layered surfaces (`backdrop-filter` tokens), synchronous pre-paint intro blur reveal (`sessionStorage` gated), and `prefers-reduced-motion` support across animations. |
 
-⌨️ Interactive Terminal — command parser with commands such as help, ls, cat, whoami, history, clear, and portfolio-specific commands.
+---
 
-🔎 Spotlight-style search — quickly search across portfolio content and available applications.
+## Built-In Applications
 
-🎨 Theme support — light, dark, and system-aware theme handling through Zustand.
+- **Portfolio File Explorer (`windows/Finder.jsx`)**: Represents portfolio directories and files as an interactive snap-grid workspace with persistent per-folder item coordinates stored via Zustand.
+- **Terminal (`windows/Terminal/`)**: Supports command history (`ArrowUp` / `ArrowDown`), `Tab` autocomplete, `Ctrl+C`, `Ctrl+L`, `Esc`, and portfolio commands (`help`, `whoami`, `about`, `skills`, `projects`, `experience`, `education`, `ls`, `cat <file>`, `neofetch`, `theme`, `resume`, `github`, `linkedin`, `contact`, `sudo hire-vikas`, `clear`).
+- **Web Browser (`windows/Safari/`)**: Tabbed history navigation, dynamic Favorites and project cards Start Page, animated progress bar, non-embeddable host detection with external fallback, and keyboard shortcuts (`Cmd/Ctrl+L` address bar, `Cmd/Ctrl+R` reload, `Alt+Left`/`Alt+Right` history, `Esc` stop).
+- **Resume Viewer (`windows/Resume.jsx`)**: Renders the bundled PDF interactively with selectable text, annotation links, responsive `ResizeObserver` page scaling, and one-click download.
+- **Quick Search (`components/Spotlight.jsx`)**: Ranks apps, documents, links, and project entries via fuzzy match scoring with `ArrowUp`/`ArrowDown` selection, `Tab` query completion, `Enter` launch, and `Esc` dismiss.
 
-🖼️ Background customization — viewers can personalize the desktop background without uploading the image to a server.
+---
 
-✨ GSAP interactions — window and Dock interactions use GSAP where animation timing and coordinated transitions benefit from it.
+## Tech Stack
 
-🧩 Reusable architecture — a shared window shell and centralized state allow different applications to plug into the same desktop environment.
+| Technology | Role |
+| :--- | :--- |
+| **React 19** | Component architecture and lazy-loaded application windows |
+| **Vite 7** | Development server, path aliases, and code-split production builds |
+| **Tailwind CSS v4** | Design tokens, responsive styling, and dark/light glass surfaces |
+| **Zustand + Immer** | Window lifecycle, active directories, browser tabs, theme, wallpapers, and widget positions |
+| **GSAP (`gsap` + `@gsap/react`)** | Intro blur reveal, desktop/window dragging, maximize geometry tweening, and Dock hover physics |
+| **React PDF (`pdfjs-dist`)** | Client-side PDF resume rendering |
+| **Lucide React & Day.js** | Vector iconography and real-time status bar clock / relative timestamps |
 
-📱 Responsive behavior — the experience is optimized primarily for desktop while handling smaller viewports gracefully.
+---
 
-Tech Stack
+## Architecture
 
-Technology
+The codebase separates global desktop orchestration from individual app views:
 
-Purpose
-
-React
-
-UI and application architecture
-
-Vite
-
-Development server and production build
-
-Tailwind CSS
-
-Styling and responsive UI
-
-Zustand
-
-Global window and theme state
-
-GSAP
-
-Animation and interaction timing
-
-Lucide React
-
-Interface icons
-
-React PDF
-
-Resume rendering
-
-Day.js
-
-Date/time handling
-
-Architecture
-
-The application is organized around a small desktop/window system rather than independent page components.
-
+```text
 src/
-├── components/       # Desktop UI: Dock, Navbar, Spotlight, Home, etc.
-├── constants/        # Portfolio data, apps, filesystem entries and configuration
-├── hoc/              # Shared window behavior / wrappers
-├── store/            # Zustand stores for windows, theme and location
-├── windows/          # Finder, Terminal, Safari, Resume, Contact, Text, Image, Trash
-├── App.jsx           # Application composition and global setup
-└── index.css         # Global styles and Tailwind entry
+├── components/
+│   ├── ChangeBackground/   # Wallpaper picker & client-side image upload sheet
+│   ├── DesktopWidgets/     # Draggable profile, Currently Shipping, and GitHub grid rails
+│   ├── MobileOS/           # Touch-first mobile workspace & slide-up app sheets
+│   ├── Dock.jsx            # Bottom launcher bar with proximity hover magnification
+│   ├── Home.jsx            # Draggable desktop project folders
+│   ├── LiquidGlassReveal.jsx
+│   ├── Navbar.jsx          # Top bar: Sauropod BrandMark, About card, Search, Control Center
+│   ├── Spotlight.jsx       # Global fuzzy Quick Search overlay
+│   └── Welcome.jsx         # Interactive variable-weight hero typography
+├── constants/              # App registry, navigation metadata, and virtual directory tree
+├── hoc/
+│   └── WindowWrapper.jsx   # Shared drag, 8-way resize, focus, maximize/minimize shell
+├── hooks/                  # Mobile breakpoint & GitHub activity fetching hooks
+├── store/                  # Zustand stores (window, location, finder, safari, theme, wallpaper, widgets)
+├── utils/                  # Fuzzy search index & GitHub pulse parser/cache
+└── windows/                # Lazy-loaded apps (Explorer, Terminal, Browser, Resume, Contact, Viewers)
+```
 
-The important architectural idea is that window behavior is shared. Individual applications provide content, while the window system handles lifecycle, focus, positioning, and stacking. This keeps new desktop applications from requiring a second window implementation.
+**Design principle:** [WindowWrapper.jsx](./src/hoc/WindowWrapper.jsx) owns all window chrome interactions (focus stacking, drag bounds, resizing, maximize animations, and viewport clamping), allowing every app inside `src/windows/` to stay focused on content and reuse body views seamlessly inside mobile sheets.
 
-Terminal
+---
 
-The Terminal is more than a visual mockup. It maintains command history and keyboard interactions and routes recognized commands through a dedicated command registry.
+## Running Locally
 
-Example commands include:
+### Prerequisites
 
-help
-whoami
-skills
-projects
-experience
-education
-ls
-cat <file>
-history
-clear
+- **Node.js 18+**
+- **npm**
 
-Keyboard support includes command history navigation, tab completion for commands, and common terminal shortcuts.
+### Setup
 
-Background Customization
-
-The Change Background feature lets visitors personalize the desktop with available wallpapers and their own image.
-
-The custom wallpaper is handled client-side. It is intentionally temporary: refreshing or starting a new session returns the portfolio to its default background instead of permanently storing the visitor's image.
-
-The implementation also accounts for practical browser constraints such as unsupported image formats, large uploads, invalid files, and keeping the desktop UI readable over high-contrast or light wallpapers.
-
-Running Locally
-
-Requirements
-
-Node.js 18+
-
-npm
-
-Install
-
-git clone https://github.com/vikasaurous/macos_portfolio.git
-cd macos_portfolio
+```sh
+git clone https://github.com/vikasaurous/portfolio.git
+cd portfolio
 npm install
-
-Start the development server
-
 npm run dev
+```
 
-Then open the local Vite URL shown in the terminal, normally:
+Open the local URL printed by Vite (typically `http://localhost:5173/portfolio/`).
 
-http://localhost:5173
+### Available Scripts
 
-Production build
+| Command | Description |
+| :--- | :--- |
+| `npm run dev` | Start the Vite development server with HMR |
+| `npm run lint` | Run ESLint across the repository |
+| `npm run build` | Generate the production bundle in `dist/` |
+| `npm run preview` | Preview the built production bundle locally |
+| `npm run deploy` | Publish `dist/` to GitHub Pages via `gh-pages` |
 
-npm run build
+---
 
-Preview the production build with:
+## Author
 
-npm run preview
+**Vikas Yadav** (`@vikasaurous`)
 
-Deployment
-
-The portfolio is deployed to GitHub Pages using the gh-pages package.
-
-npm run deploy
-
-The production URL is:
-
-https://vikasaurous.github.io/portfolio/
-
-Engineering Focus
-
-The interesting part of this project is not simply recreating the appearance of macOS. The goal is to make the interaction model behave consistently as the number of applications grows.
-
-That means keeping responsibilities separated:
-
-Zustand owns shared desktop state.
-
-Window wrappers own reusable window behavior.
-
-Application components own application-specific UI and local state.
-
-Configuration/data modules own portfolio content.
-
-GSAP is used where coordinated animation is useful rather than making every interaction animation-dependent.
-
-This structure makes it possible to add or modify desktop applications without duplicating the underlying window logic.
-
-Project
-
-The main project currently showcased in the portfolio is Nutshell — AI Text Summarizer, a full-stack AI-powered text summarization application.
-
-Project details and links are available inside the Finder-style Work directory of the portfolio.
-
-Feedback
-
-This is an ongoing project. If you notice an interaction that feels inconsistent, a responsive edge case, or an architectural improvement worth considering, feel free to open an issue or start a discussion.
-
-Constructive feedback is welcome.
-
-Author
-
-Vikas Yadav
-
-GitHub: https://github.com/vikasaurous
-
-LinkedIn: https://www.linkedin.com/in/connectvikasyadav/
-
-Portfolio: https://vikasaurous.github.io/portfolio/
-
-<p align="center">
-  Built with React, curiosity, and a questionable amount of debugging. ☕
-</p>
+- GitHub: [github.com/vikasaurous](https://github.com/vikasaurous)
+- LinkedIn: [linkedin.com/in/connectvikasyadav](https://www.linkedin.com/in/connectvikasyadav/)
+- Live Portfolio: [vikasaurous.github.io/portfolio](https://vikasaurous.github.io/portfolio/)

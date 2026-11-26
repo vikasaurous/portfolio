@@ -1091,7 +1091,7 @@ html.dark,
 
     ul {
       li {
-        @apply absolute z-0 select-none flex items-center flex-col gap-1 p-1.5 rounded-2xl transition-all duration-150;
+        @apply absolute z-0 select-none flex items-center flex-col gap-1 p-1.5 rounded-2xl transition-[background-color,box-shadow] duration-150;
 
         &:hover {
           background: rgba(255, 255, 255, 0.14);

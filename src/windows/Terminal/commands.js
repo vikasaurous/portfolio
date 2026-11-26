@@ -115,6 +115,10 @@ const projects = () =>
     "      React · Node.js · MongoDB · Groq LLM",
     "      → https://nutshell-summarizer.vercel.app",
     "",
+    "  2.  FocusFrame — Productivity New Tab",
+    "      React 19 · TypeScript · TanStack Start · Cloudflare Workers",
+    "      → https://app.focusframe.workers.dev",
+    "",
     '  Tip: type "contact" to get in touch about a project.',
   ]);
 

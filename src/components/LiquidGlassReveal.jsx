@@ -101,7 +101,7 @@ const LiquidGlassReveal = ({ children }) => {
         ease: EASE_ELEMENT,
         delay: reduced ? 0 : T.ICONS_DELAY,
         stagger: reduced ? 0 : T.ICONS_STAGGER,
-        clearProps: "all",
+        clearProps: "opacity",
       });
     }
   }, []);
