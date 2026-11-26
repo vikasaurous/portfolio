@@ -1,0 +1,1 @@
+import{W as r}from"./index-CHxDhJQF.js";import{S as a}from"./SafariBrowser-BycgXVwg.js";import"./WindowControl-B1A0BcmC.js";import"./chevron-left-l0Nw1Kfn.js";const f=r(a,"safari");export{f as default};
