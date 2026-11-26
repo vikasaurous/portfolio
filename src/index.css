@@ -67,6 +67,13 @@ html.dark body {
   --lg-text-primary: rgba(18, 20, 26, 0.9);
   --lg-text-secondary: rgba(50, 54, 64, 0.74);
   --lg-text-muted: rgba(70, 74, 86, 0.54);
+  --lg-hero-glass-gradient: linear-gradient(
+    174deg,
+    rgba(255, 255, 255, 0.96) 24%,
+    rgba(255, 255, 255, 0.78) 46%,
+    rgba(232, 240, 255, 0.44) 68%,
+    rgba(224, 234, 255, 0.3) 84%
+  );
 
   --lg-window-shadow-active:
     0 0 0 0.5px rgba(0, 0, 0, 0.1),
@@ -342,7 +349,26 @@ html.dark,
   }
 
   #welcome {
-    @apply text-gray-200 dark:text-gray-300 flex flex-col justify-center items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none max-sm:h-screen max-sm:w-full max-sm:px-10;
+    @apply flex flex-col justify-center items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none max-sm:h-screen max-sm:w-full max-sm:px-10;
+
+    & > p {
+      color: rgba(255, 255, 255, 0.88);
+      text-shadow: 0 1px 12px rgba(0, 0, 0, 0.24);
+    }
+
+    h1 {
+      text-shadow: none;
+      padding: 36px 48px;
+      margin: calc(0.625rem - 36px) -48px -36px;
+      background-image: var(--lg-hero-glass-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      filter:
+        drop-shadow(0 2px 10px rgba(0, 0, 0, 0.2))
+        drop-shadow(0 12px 28px rgba(0, 0, 0, 0.24));
+    }
 
     .small-screen {
       @apply sm:hidden m-7 bg-red-300/20 backdrop-blur-lg p-3 rounded-md absolute top-10;
@@ -1415,13 +1441,24 @@ html.dark,
   }
 
   .ios-hero-title {
+    display: inline-block;
     font-family: var(--font-georama);
     font-size: 38px;
     line-height: 1;
     font-style: italic;
     font-weight: 400;
     letter-spacing: -0.02em;
-    margin-top: 2px;
+    padding: 12px 18px;
+    margin: calc(2px - 12px) -18px -12px;
+    text-shadow: none;
+    background-image: var(--lg-hero-glass-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    filter:
+      drop-shadow(0 1px 6px rgba(0, 0, 0, 0.22))
+      drop-shadow(0 6px 16px rgba(0, 0, 0, 0.2));
   }
 
   .ios-widget-card {
