@@ -6,6 +6,7 @@ const useWidgetStore = create(
     (set) => ({
       showWidgets: true,
       position: null,
+      recruiterPosition: null,
 
       toggleWidgets: () =>
         set((state) => ({ showWidgets: !state.showWidgets })),
@@ -14,7 +15,9 @@ const useWidgetStore = create(
 
       setWidgetPosition: (pos) => set({ position: pos }),
 
-      resetWidgetPosition: () => set({ position: null }),
+      setRecruiterPosition: (pos) => set({ recruiterPosition: pos }),
+
+      resetWidgetPosition: () => set({ position: null, recruiterPosition: null }),
     }),
     {
       name: "macos-activity-widget-storage-v2",

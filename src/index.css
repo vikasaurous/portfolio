@@ -1156,10 +1156,49 @@ html.dark,
   }
 
   /* ═══════════════════════════════════════════════════════════════════════════
-   * DESKTOP LIVE WIDGET — Apple Tahoe 12-Week Commit Heatgraph
+   * DESKTOP LIVE WIDGETS — Stacked Tahoe Right Rail (Shipping + 12w Matrix)
    * ═══════════════════════════════════════════════════════════════════════════ */
-  .lg-widget {
+  .lg-widget-stack {
     position: fixed;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    user-select: none;
+    touch-action: none;
+    cursor: grab;
+    transition:
+      opacity 0.28s ease,
+      filter 0.28s ease,
+      transform 0.16s ease;
+
+    &.lg-widget-receded {
+      opacity: 0.44;
+      filter: saturate(0.26);
+
+      &:hover {
+        opacity: 1;
+        filter: saturate(1);
+      }
+    }
+
+    &.lg-widget-dragging {
+      opacity: 1;
+      filter: saturate(1);
+      cursor: grabbing;
+      transform: scale(1.014);
+
+      .lg-widget {
+        box-shadow:
+          0 0 0 0.5px rgba(0, 0, 0, 0.12),
+          0 20px 46px rgba(0, 0, 0, 0.24),
+          0 34px 70px rgba(0, 0, 0, 0.24);
+      }
+    }
+  }
+
+  .lg-widget {
+    position: relative;
+    width: 100%;
     padding: 15px 16px 13px;
     border-radius: 24px;
     background: var(--lg-shell-bg);
@@ -1169,12 +1208,7 @@ html.dark,
       0 0 0 0.5px rgba(0, 0, 0, 0.08),
       0 10px 28px rgba(0, 0, 0, 0.14),
       0 22px 52px rgba(0, 0, 0, 0.16);
-    user-select: none;
-    touch-action: none;
-    cursor: grab;
     transition:
-      opacity 0.28s ease,
-      filter 0.28s ease,
       box-shadow 0.2s ease,
       transform 0.16s ease;
 
@@ -1193,28 +1227,10 @@ html.dark,
     }
 
     &:hover {
-      opacity: 1;
-      filter: saturate(1);
       box-shadow:
         0 0 0 0.5px rgba(0, 0, 0, 0.1),
         0 14px 36px rgba(0, 0, 0, 0.18),
         0 28px 60px rgba(0, 0, 0, 0.2);
-    }
-
-    &.lg-widget-receded {
-      opacity: 0.44;
-      filter: saturate(0.26);
-    }
-
-    &.lg-widget-dragging {
-      opacity: 1;
-      filter: saturate(1);
-      cursor: grabbing;
-      transform: scale(1.018);
-      box-shadow:
-        0 0 0 0.5px rgba(0, 0, 0, 0.12),
-        0 20px 46px rgba(0, 0, 0, 0.24),
-        0 34px 70px rgba(0, 0, 0, 0.24);
     }
   }
 
@@ -1239,11 +1255,51 @@ html.dark,
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
   }
 
+  .lg-widget-badge-sky {
+    background: rgba(14, 165, 233, 0.16);
+    color: #0284c7;
+    border-color: rgba(14, 165, 233, 0.28);
+  }
+
   html.dark .lg-widget-badge,
   .dark .lg-widget-badge {
     color: #34d399;
     border-color: rgba(52, 211, 153, 0.22);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+
+  html.dark .lg-widget-badge-sky,
+  .dark .lg-widget-badge-sky {
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.24);
+  }
+
+  .lg-shipping-commit {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 13px;
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: background 0.16s ease, border-color 0.16s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.07);
+      border-color: rgba(0, 0, 0, 0.09);
+    }
+  }
+
+  html.dark .lg-shipping-commit,
+  .dark .lg-shipping-commit {
+    background: rgba(255, 255, 255, 0.055);
+    border-color: rgba(255, 255, 255, 0.08);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.095);
+      border-color: rgba(255, 255, 255, 0.14);
+    }
   }
 
   .lg-widget-status {
@@ -1772,6 +1828,7 @@ html.dark,
   .lg-icon-btn,
   .lg-card,
   .lg-widget,
+  .lg-widget-stack,
   .dock-container,
   .ios-sheet,
   .ios-app-tile,

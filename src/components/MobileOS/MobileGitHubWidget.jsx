@@ -1,50 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { RefreshCw, ArrowUpRight, GitBranch } from "lucide-react";
-import useWidgetStore from "#store/widgets";
-import {
-  FALLBACK_GITHUB_MATRIX,
-  fetchGitHubPulse,
-  formatContributionDay,
-  getMumbaiTimeLabel,
-} from "../../utils/githubPulse";
+import { formatContributionDay } from "../../utils/githubPulse";
 
-const MobileGitHubWidget = () => {
-  const showWidgets = useWidgetStore((s) => s.showWidgets);
-  const [matrix, setMatrix] = useState(FALLBACK_GITHUB_MATRIX);
-  const [syncing, setSyncing] = useState(true);
+const MobileGitHubWidget = ({ pulse, syncing, mumbaiTime, onRefresh }) => {
   const [selectedDay, setSelectedDay] = useState(null);
-  const [mumbaiTime, setMumbaiTime] = useState(getMumbaiTimeLabel);
-
-  const loadMatrix = useCallback(async (force = false) => {
-    setSyncing(true);
-    const result = await fetchGitHubPulse({ force });
-    setMatrix(result);
-    setSyncing(false);
-  }, []);
-
-  useEffect(() => {
-    if (!showWidgets) return;
-    let active = true;
-
-    fetchGitHubPulse().then((result) => {
-      if (!active) return;
-      setMatrix(result);
-      setSyncing(false);
-    });
-
-    const timer = setInterval(() => setMumbaiTime(getMumbaiTimeLabel()), 30000);
-    return () => {
-      active = false;
-      clearInterval(timer);
-    };
-  }, [showWidgets]);
-
-  if (!showWidgets) return null;
 
   const statusLabel =
-    matrix.source === "live"
+    pulse.source === "live"
       ? "Live"
-      : matrix.source === "cached"
+      : pulse.source === "cached"
         ? "Synced"
         : "Offline";
 
@@ -56,7 +20,7 @@ const MobileGitHubWidget = () => {
       {/* Header */}
       <div className="flex items-center justify-between gap-2 mb-3">
         <a
-          href={matrix.profileUrl}
+          href={pulse.profileUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-2 min-w-0"
@@ -66,7 +30,7 @@ const MobileGitHubWidget = () => {
           </span>
           <div className="flex items-baseline gap-1.5 min-w-0">
             <span className="text-[13px] font-semibold tabular-nums text-[var(--lg-text-primary)]">
-              {matrix.total12Weeks} commits
+              {pulse.total12Weeks} commits
             </span>
             <span className="text-[11px] font-medium text-[var(--lg-text-muted)]">
               · 12w
@@ -78,7 +42,7 @@ const MobileGitHubWidget = () => {
           <span className="lg-widget-status">
             <span
               className={`size-1.5 rounded-full ${
-                matrix.source === "offline"
+                pulse.source === "offline"
                   ? "bg-amber-400"
                   : "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.75)]"
               }`}
@@ -87,7 +51,7 @@ const MobileGitHubWidget = () => {
           </span>
           <button
             type="button"
-            onClick={() => loadMatrix(true)}
+            onClick={() => onRefresh(true)}
             aria-label="Refresh GitHub activity"
             className="lg-icon-btn"
           >
@@ -98,7 +62,7 @@ const MobileGitHubWidget = () => {
 
       {/* 12x7 Contribution Matrix (tappable for touch inspection) */}
       <div className="lg-matrix-grid mb-3" role="group" aria-label="12-week daily commit heatmap">
-        {matrix.weeks.flatMap((week, weekIdx) =>
+        {pulse.weeks.flatMap((week, weekIdx) =>
           week.map((day, dayIdx) =>
             day ? (
               <button
@@ -138,12 +102,12 @@ const MobileGitHubWidget = () => {
         ) : (
           <>
             <a
-              href={matrix.latestRepo?.url || matrix.profileUrl}
+              href={pulse.latestRepo?.url || pulse.profileUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1 font-medium text-[var(--lg-text-secondary)] truncate"
             >
-              <span className="truncate">{matrix.latestRepo?.name}</span>
+              <span className="truncate">{pulse.latestRepo?.name}</span>
               <ArrowUpRight className="size-3 shrink-0 opacity-70" />
             </a>
             <span className="text-[10.5px] font-medium tabular-nums text-[var(--lg-text-muted)] shrink-0">
